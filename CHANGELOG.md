@@ -1,9 +1,13 @@
 # Changelog
 
-## 1.4.3-PRE-RELEASE
+## 1.4.4-RELEASE (2022-12-01)
+
+1. Update Coordinape sign up links
+
+## 1.4.3-RELEASE (2022-11-10)
 
 1. Updated Guild listing to include DAOlationships and Project Management guilds
-2. Update coordinape sign up links for bDAO Season 5 retroactive epoch
+2. Update Coordinape sign up links for bDAO Season 5 retroactive epoch
 
 ## 1.4.2-RELEASE (2022-10-28)
 
