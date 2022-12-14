@@ -4,6 +4,7 @@
 
 1. Remove discord.js-captcha dependency
 2. Update Mad Hatter commentary
+3. Modify `.eslintrc.js` to allow template literals in strings
 
 ## 1.4.4-RELEASE (2022-12-01)
 
