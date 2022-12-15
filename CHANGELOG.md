@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.4.5-PRE-RELEASE (2022-12-08)
+## 1.4.5-RELEASE (2022-12-14)
 
 1. Remove discord.js-captcha dependency
 2. Update Mad Hatter commentary
