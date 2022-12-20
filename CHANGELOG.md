@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.6-RELEASE (2022-12-20)
+
+1. Update Sentry DSN key in `.env.template`
+2. Update Discord server ID list
+3. Alphabetized `BANNED_NAMES` array
+
 ## 1.4.5-RELEASE (2022-12-14)
 
 1. Remove discord.js-captcha dependency
