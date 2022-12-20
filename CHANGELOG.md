@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.4.6-PRE-RELEASE (2022-12-20)
+## 1.4.6-RELEASE (2022-12-20)
 
 1. Update Sentry DSN key in `.env.template`
 2. Update Discord server ID list
