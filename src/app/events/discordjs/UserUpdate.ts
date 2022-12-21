@@ -1,7 +1,7 @@
 import { PartialUser, User } from 'discord.js';
-import { DiscordEvent } from '../types/discord/DiscordEvent';
-import ServiceUtils from '../utils/ServiceUtils';
-import Log, { LogUtils } from '../utils/Log';
+import { DiscordEvent } from '../../types/discord/DiscordEvent';
+import ServiceUtils from '../../utils/ServiceUtils';
+import Log, { LogUtils } from '../../utils/Log';
 
 export default class implements DiscordEvent {
 	name = 'userUpdate';

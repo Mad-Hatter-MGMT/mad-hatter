@@ -37,6 +37,11 @@ export default class Squad extends SlashCommand {
 				[discordServerIds.banklessDAO]: [
 					{
 						type: ApplicationCommandPermissionType.ROLE,
+						id: roleIds.level1,
+						permission: true,
+					},
+					{
+						type: ApplicationCommandPermissionType.ROLE,
 						id: roleIds.level2,
 						permission: true,
 					},
@@ -52,6 +57,11 @@ export default class Squad extends SlashCommand {
 					},
 				],
 				[discordServerIds.discordBotGarage]: [
+					{
+						type: ApplicationCommandPermissionType.ROLE,
+						id: roleIds.level1,
+						permission: true,
+					},
 					{
 						type: ApplicationCommandPermissionType.ROLE,
 						id: roleIds.level2,

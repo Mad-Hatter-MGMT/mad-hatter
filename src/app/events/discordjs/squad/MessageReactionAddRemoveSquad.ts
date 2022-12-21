@@ -1,10 +1,10 @@
 import { GuildMember, Message, MessageReaction, User } from 'discord.js';
-import channelIds from '../../service/constants/channelIds';
-import Log, { LogUtils } from '../../utils/Log';
-import { claimSquad, unclaimSquad } from '../../service/squad/LaunchSquad';
+import channelIds from '../../../service/constants/channelIds';
+import Log, { LogUtils } from '../../../utils/Log';
+import { claimSquad, unclaimSquad } from '../../../service/squad/LaunchSquad';
 import { Db } from 'mongodb';
-import dbInstance from '../../utils/MongoDbUtils';
-import constants from '../../service/constants/constants';
+import dbInstance from '../../../utils/MongoDbUtils';
+import constants from '../../../service/constants/constants';
 
 export default async (reaction: MessageReaction, user: User, toggle: string): Promise<any> => {
 	if (reaction.message.channel.id !== channelIds.SQUAD) {
