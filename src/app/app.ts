@@ -9,6 +9,7 @@ import Discord, {
 	ClientOptions,
 	GatewayDispatchEvents,
 	Partials,
+	GatewayIntentBits
 } from 'discord.js';
 import path from 'path';
 import fs from 'fs';
@@ -65,16 +66,16 @@ client.login(process.env.DISCORD_BOT_TOKEN).catch(Log.error);
 function initializeClient(): Client {
 	const clientOptions: ClientOptions = {
 		intents: [
-			"Guilds",
-			"GuildBans",
-			"GuildMembers",
-			"GuildEmojisAndStickers",
-			"GuildVoiceStates",
-			"GuildPresences",
-			"GuildMessages",
-			"GuildMessageReactions",
-			"DirectMessages",
-			"DirectMessageReactions"
+			GatewayIntentBits.Guilds,
+			GatewayIntentBits.GuildBans,
+			GatewayIntentBits.GuildMembers,
+			GatewayIntentBits.GuildEmojisAndStickers,
+			GatewayIntentBits.GuildVoiceStates,
+			GatewayIntentBits.GuildPresences,
+			GatewayIntentBits.GuildMessages,
+			GatewayIntentBits.GuildMessageReactions,
+			GatewayIntentBits.DirectMessages,
+			GatewayIntentBits.DirectMessageReactions
 		],
 		partials: [Partials.Message, Partials.Channel, Partials.Reaction, Partials.User],
 	};
