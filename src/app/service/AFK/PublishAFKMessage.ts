@@ -1,10 +1,10 @@
-import { MessageEmbedOptions } from 'discord.js';
+import { APIEmbed } from 'discord.js';
 
-export const PublishAFKMessage = (username: string, content: string, guildId: string, channelId: string, id: string) : MessageEmbedOptions => {
+export const PublishAFKMessage = (username: string, content: string, guildId: string, channelId: string, id: string) : APIEmbed => {
 	return {
 		color: 1998388,
 		title: `${username} mentioned you!`,
-		timestamp: new Date().getTime(),
+		timestamp: new Date().getTime().toString(),
 		description: content,
 		url: `https://discord.com/channels/${guildId}/${channelId}/${id}`,
 		footer: {

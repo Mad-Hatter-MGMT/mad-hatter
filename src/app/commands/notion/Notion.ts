@@ -1,6 +1,6 @@
 import { Client as NotionClient } from '@notionhq/client';
 import dayjs from 'dayjs';
-import { BaseGuildVoiceChannel, EmbedFieldData, MessageEmbed } from 'discord.js';
+import { BaseGuildVoiceChannel, ChannelType, EmbedField, EmbedBuilder } from 'discord.js';
 import { Db } from 'mongodb';
 import { CommandContext, CommandOptionType, SlashCommand, SlashCreator } from 'slash-create';
 import constants from '../../service/constants/constants';
@@ -130,7 +130,7 @@ export default class NotionNotes extends SlashCommand {
 		const options = ctx.options[COMMAND_MEETING_NOTES];
 		const { guild, guildMember } = await ServiceUtils.getGuildAndMember(ctx);
 		const voiceChannelId = guildMember.voice.channelId;
-		const fields: EmbedFieldData[] = [];
+		const fields: EmbedField[] = [];
 
 		// Initialize properties with required or automatically generated fields
 		const properties = {
@@ -167,7 +167,7 @@ export default class NotionNotes extends SlashCommand {
 				return channel.id == voiceChannelId;
 			}) as BaseGuildVoiceChannel;
 
-			if (voiceChannel != null && voiceChannel.type != 'GUILD_STAGE_VOICE') {
+			if (voiceChannel != null && voiceChannel.type !=  ChannelType.GuildStageVoice) {
 				const attendees = voiceChannel.members.map(member => member.displayName).join(', ');
 				properties['Attendance'] = {
 					rich_text: [
@@ -183,7 +183,7 @@ export default class NotionNotes extends SlashCommand {
 				fields.push({
 					'name': 'Attendees',
 					'value': attendees,
-				} as EmbedFieldData);
+				} as EmbedField);
 			}
 		}
 
@@ -199,7 +199,7 @@ export default class NotionNotes extends SlashCommand {
 			fields.push({
 				'name': 'Type',
 				'value': options.type,
-			} as EmbedFieldData);
+			} as EmbedField);
 		}
 
 		// Default database is the central meeting notes database
@@ -218,7 +218,7 @@ export default class NotionNotes extends SlashCommand {
 				fields.push({
 					'name': 'Guild',
 					'value': options.guild,
-				} as EmbedFieldData);
+				} as EmbedField);
 			}
 		}
 
@@ -228,7 +228,7 @@ export default class NotionNotes extends SlashCommand {
 			},
 			properties: properties as Record<string, any>,
 		}).then(async response => {
-			const embed = new MessageEmbed()
+			const embed = new EmbedBuilder()
 				.setDescription(`Created meeting notes: ${response.url}`)
 				.setColor(0xFF1A1A)
 				.setFields(fields.reverse());

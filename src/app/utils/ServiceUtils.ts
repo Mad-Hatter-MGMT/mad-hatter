@@ -6,14 +6,16 @@ import {
 	Collection,
 	DMChannel,
 	Guild,
-	GuildMember, MessageAttachment,
-	Permissions,
+	GuildMember, AttachmentBuilder,
 	Role,
 	RoleManager,
 	Snowflake,
 	StageChannel,
 	User,
 	VoiceChannel,
+	ChannelType,
+	PermissionsBitField,
+	Attachment,
 } from 'discord.js';
 import { Db } from 'mongodb';
 import { ButtonStyle, CommandContext, ComponentActionRow, ComponentType } from 'slash-create';
@@ -84,11 +86,11 @@ const ServiceUtils = {
 	},
 	
 	isDiscordAdmin(guildMember: GuildMember): boolean {
-		return guildMember.permissions.has(Permissions.FLAGS.ADMINISTRATOR);
+		return guildMember.permissions.has(PermissionsBitField.Flags.Administrator);
 	},
 	
 	isDiscordServerManager(guildMember: GuildMember): boolean {
-		return guildMember.permissions.has(Permissions.FLAGS.MANAGE_GUILD);
+		return guildMember.permissions.has(PermissionsBitField.Flags.ManageGuild);
 	},
 
 	isAnyLevel(guildMember: GuildMember): boolean {
@@ -278,8 +280,8 @@ const ServiceUtils = {
 	getAllVoiceChannels(guildMember: GuildMember): Collection<string, VoiceChannel | StageChannel> {
 		return guildMember.guild.channels.cache
 			.filter(guildChannel =>
-				(guildChannel.type === 'GUILD_VOICE'
-					|| guildChannel.type === 'GUILD_STAGE_VOICE')) as Collection<string, VoiceChannel | StageChannel>;
+				(guildChannel.type === ChannelType.GuildVoice
+					|| guildChannel.type === ChannelType.GuildStageVoice)) as Collection<string, VoiceChannel | StageChannel>;
 	},
 
 	/**
@@ -305,7 +307,7 @@ const ServiceUtils = {
 		}
 	},
 	
-	async askForLinksMessageAttachment(guildMember: GuildMember): Promise<MessageAttachment> {
+	async askForLinksMessageAttachment(guildMember: GuildMember): Promise<Attachment> {
 		const sendOutPOAPReplyMessage = await guildMember.send({ content: 'Please upload links.txt file from POAP.' });
 		const dmChannel: DMChannel = await sendOutPOAPReplyMessage.channel.fetch() as DMChannel;
 		const replyOptions: AwaitMessagesOptions = {

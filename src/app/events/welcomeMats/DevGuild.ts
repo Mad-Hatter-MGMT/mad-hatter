@@ -1,4 +1,4 @@
-import { GuildMember, MessageEmbed } from 'discord.js';
+import { GuildMember, EmbedBuilder } from 'discord.js';
 import { Client } from '@notionhq/client';
 import notionPageRefs from '../../service/notion/NotionGuildPages';
 import { notionQueue } from '../../service/notion/NotionQueue';
@@ -95,7 +95,7 @@ export default async function sendGuildWelcomeMessage(guildMember: GuildMember):
 		message += '\n';
 	});
     
-	const embed = new MessageEmbed()
+	const embed = new EmbedBuilder()
 		.setTitle('Welcome to the Developer\'s Guild!')
 		.setColor(0xF1BD1B)
 		.setDescription(message);

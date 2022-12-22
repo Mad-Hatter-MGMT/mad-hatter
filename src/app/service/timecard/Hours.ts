@@ -1,10 +1,11 @@
-import { GuildMember, MessageEmbedOptions } from 'discord.js';
+import { GuildMember } from 'discord.js';
 import { Collection, Db, Cursor } from 'mongodb';
 import constants from '../constants/constants';
 import { Timecard } from '../../types/timecard.ts/Timecard';
 import Log from '../../utils/Log';
 import { generateEmbedMessage } from './publishTimecards/publishTimecards';
 import MongoDbUtils from '../../utils/MongoDbUtils';
+import { MessageEmbedOptions } from 'slash-create';
 
 export default async (guildMember: GuildMember): Promise<any> => {
 

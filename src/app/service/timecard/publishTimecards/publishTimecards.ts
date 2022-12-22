@@ -1,6 +1,6 @@
-import { MessageEmbedOptions } from 'discord.js';
 import { Timecard } from '../../../types/timecard.ts/Timecard';
 import dayjs from 'dayjs';
+import { MessageEmbedOptions } from 'slash-create';
 
 export const generateEmbedMessage = (timecard:Timecard): MessageEmbedOptions => {
 

@@ -1,7 +1,7 @@
 import {
 	DMChannel,
 	GuildMember,
-	MessageEmbed,
+	EmbedBuilder,
 	TextChannel,
 	User,
 	Message,
@@ -388,7 +388,7 @@ export const claimSquad = async (user: User, squadMsg: Message, toggle: string):
 	if (squadMsg.embeds[0].fields.length <= 24) {
 		Log.debug('squadUp claimSquad() valid to claim');
 
-		const updateEmbed = squadMsg.embeds[0].addField('\u200b', `🙋 - <@${user.id}>`, false);
+		const updateEmbed = squadMsg.embeds[0];
 
 		await dbClaimSquad(updateEmbed.footer.text, user.id, toggle);
 
@@ -407,7 +407,7 @@ export const unclaimSquad = async (user: User, squadMsg: Message, toggle: string
 		return el.value === `🙋 - <@${user.id}>`;
 	}
 
-	const updateEmbed = squadMsg.embeds[0];
+	const updateEmbed: any = squadMsg.embeds[0];
 
 	updateEmbed.fields = fields;
 
@@ -416,14 +416,14 @@ export const unclaimSquad = async (user: User, squadMsg: Message, toggle: string
 	await squadMsg.edit({ embeds:[updateEmbed] });
 };
 
-const createEmbed = (member: GuildMember, title: string, description: string): MessageEmbed => {
+const createEmbed = (member: GuildMember, title: string, description: string): EmbedBuilder => {
 	Log.debug('squadUp createEmbed() invoked');
 
-	return new MessageEmbed()
-		.setAuthor(member.user.username, member.user.avatarURL())
+	return new EmbedBuilder()
+		.setAuthor({name: member.user.username, iconURL: member.user.avatarURL()})
 		.setTitle(title)
 		.setDescription(description)
-		.setFooter(randomUUID())
+		.setFooter({text: randomUUID()})
 		.setTimestamp();
 };
 
