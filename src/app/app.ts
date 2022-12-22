@@ -89,10 +89,10 @@ function initializeDiscordEvents(): void {
 				client.once(event.name, (...args) => event.execute(...args, client));
 			} else {
 				client.on(event.name, (...args) => {
-					event.execute(...args, client)
+					event.execute(...args, client);
 				});
 			}
-			console.log(`registered discordjs event ${event.name}`)
+			Log.debug(`registered discordjs event ${event.name}`);
 		} catch (e) {
 			Log.error('Event failed to process', {
 				indexMeta: true,
