@@ -182,7 +182,7 @@ const xPostConfirm = async (user: User, squadEmbed: MessageEmbed): Promise<void>
 			new MessageButton()
 				.setCustomId(`squadUp:xPostConfirm:${emoji}`)
 				.setLabel(`${emoji}`)
-				.setStyle('PRIMARY'),
+				.setStyle('SUCCESS'),
 		);
 	}
 
@@ -220,7 +220,7 @@ const finalConfirm = async (user: User, squadEmbed: MessageEmbed, xChannelList: 
 			new MessageButton()
 				.setCustomId(`squadUp:finalConfirm:${emoji}:${xChannelList.toString()}`)
 				.setLabel(`${emoji}`)
-				.setStyle('PRIMARY'),
+				.setStyle('SUCCESS'),
 		);
 	}
 
@@ -249,7 +249,7 @@ const postSquad = async (user: User, squadEmbed: MessageEmbed, meta: ComponentMe
 			new MessageButton()
 				.setCustomId(`squadUp:postSquad:${emoji}:${squadId}`)
 				.setLabel(`${emoji}`)
-				.setStyle('PRIMARY'),
+				.setStyle('SUCCESS'),
 		);
 	}
 
@@ -265,7 +265,7 @@ const postSquad = async (user: User, squadEmbed: MessageEmbed, meta: ComponentMe
 	await dbCreateSquad(squadId, squadEmbed, user.id, squadMsg);
 
 	let xChannelList: string[];
-	if (meta.data) xChannelList = meta.data.split(':');
+	if (meta.data) xChannelList = meta.data.split(',');
 	else xChannelList = [];
 
 	if (xChannelList.length > 0) {
@@ -458,7 +458,7 @@ const interactionSetActiveSquad = async (squadStatus: SquadStatus) => {
 			new MessageButton()
 				.setCustomId(`squadUp:postSquad:${emoji}:${squadStatus.squadId}`)
 				.setLabel(`${emoji}`)
-				.setStyle('PRIMARY'),
+				.setStyle('SUCCESS'),
 		);
 	}
 
