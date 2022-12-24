@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
-import madHatterPhrases from '../../service/constants/madHatterPhrases';
-import Log, { LogUtils } from '../../utils/Log';
-import constants from '../../service/constants/constants';
+import madHatterPhrases from '../../../service/constants/madHatterPhrases';
+import Log, { LogUtils } from '../../../utils/Log';
+import constants from '../../../service/constants/constants';
 
 const MessageCreateOnMH = async (message: Message): Promise<void> => {
 	try {

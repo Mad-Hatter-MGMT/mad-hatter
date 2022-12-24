@@ -1,8 +1,8 @@
 import { Message } from 'discord.js';
-import { DiscordEvent } from '../types/discord/DiscordEvent';
-import MessageCreateOnMH from './chat/MessageCreateOnMH';
-import { LogUtils } from '../utils/Log';
-import HandleAFK from './chat/HandleAFK';
+import { DiscordEvent } from '../../types/discord/DiscordEvent';
+import MessageCreateOnMH from '../discordjs/chat/MessageCreateOnMH';
+import { LogUtils } from '../../utils/Log';
+import HandleAFK from '../discordjs/chat/HandleAFK';
 
 export default class implements DiscordEvent {
 	name = 'messageCreate';

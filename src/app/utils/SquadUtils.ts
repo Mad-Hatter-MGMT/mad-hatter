@@ -1,13 +1,13 @@
-import { GuildMember } from 'discord.js';
+import { User } from 'discord.js';
 import ValidationError from '../errors/ValidationError';
 
 const SquadUtils = {
 
-	async validateSummary(guildMember: GuildMember, summary: string): Promise<any> {
+	async validateSummary(user: User, summary: string): Promise<any> {
 		const CREATE_SUMMARY_REGEX = /^[\w\s\W]{1,4000}$/;
 		if (summary == null || !CREATE_SUMMARY_REGEX.test(summary)) {
-			await guildMember.send({
-				content: `<@${guildMember.user.id}>\n` +
+			await user.send({
+				content: `<@${user.id}>\n` +
 					'Please enter a valid summary: \n' +
 					'- 4000 characters maximum\n ' +
 					'- alphanumeric\n ' +
@@ -17,11 +17,11 @@ const SquadUtils = {
 		}
 	},
 
-	async validateTitle(guildMember: GuildMember, title: string): Promise<any> {
+	async validateTitle(user: User, title: string): Promise<any> {
 		const CREATE_TITLE_REGEX = /^[\w\s\W]{1,250}$/;
 		if (title == null || !CREATE_TITLE_REGEX.test(title)) {
-			await guildMember.send({
-				content: `<@${guildMember.user.id}>\n` +
+			await user.send({
+				content: `<@${user.id}>\n` +
 					'Please enter a valid title: \n' +
 					'- 250 characters maximum\n ' +
 					'- alphanumeric\n ' +
