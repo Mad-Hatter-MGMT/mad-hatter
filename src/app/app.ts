@@ -121,7 +121,6 @@ function initializeSlashCreateEvents(): void {
 		},
 	}));
 	// Ran after the command has completed
-	// Ran after the command has completed
 	creator.on('commandRun', (command:SlashCommand, result: Promise<any>, ctx: CommandContext) => {
 		LogUtils.logCommandEnd(ctx);
 	});
