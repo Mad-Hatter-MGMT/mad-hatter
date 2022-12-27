@@ -9,7 +9,6 @@ import notionPageRefs from '../../service/notion/NotionGuildPages';
 import { NotionMeetingNotes } from '../../types/notion/NotionMeetingNotes';
 import { LogUtils } from '../../utils/Log';
 import MongoDbUtils from '../../utils/MongoDbUtils';
-import { command } from '../../utils/SentryUtils';
 import ServiceUtils from '../../utils/ServiceUtils';
 const notion = new NotionClient({ auth: process.env.NOTION_TOKEN });
 
@@ -102,7 +101,6 @@ export default class NotionNotes extends SlashCommand {
 		});
 	}
 
-	@command
 	async run(ctx: CommandContext): Promise<any> {
 		LogUtils.logCommandStart(ctx);
 		// Ignores commands from bots
@@ -167,7 +165,7 @@ export default class NotionNotes extends SlashCommand {
 				return channel.id == voiceChannelId;
 			}) as BaseGuildVoiceChannel;
 
-			if (voiceChannel != null && voiceChannel.type !=  ChannelType.GuildStageVoice) {
+			if (voiceChannel != null && voiceChannel.type != ChannelType.GuildStageVoice) {
 				const attendees = voiceChannel.members.map(member => member.displayName).join(', ');
 				properties['Attendance'] = {
 					rich_text: [

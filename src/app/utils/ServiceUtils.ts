@@ -6,7 +6,7 @@ import {
 	Collection,
 	DMChannel,
 	Guild,
-	GuildMember, AttachmentBuilder,
+	GuildMember,
 	Role,
 	RoleManager,
 	Snowflake,

@@ -9,7 +9,7 @@ import Discord, {
 	ClientOptions,
 	GatewayDispatchEvents,
 	Partials,
-	GatewayIntentBits
+	GatewayIntentBits,
 } from 'discord.js';
 import path from 'path';
 import fs from 'fs';
@@ -75,7 +75,7 @@ function initializeClient(): Client {
 			GatewayIntentBits.GuildMessages,
 			GatewayIntentBits.GuildMessageReactions,
 			GatewayIntentBits.DirectMessages,
-			GatewayIntentBits.DirectMessageReactions
+			GatewayIntentBits.DirectMessageReactions,
 		],
 		partials: [Partials.Message, Partials.Channel, Partials.Reaction, Partials.User],
 	};

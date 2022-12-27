@@ -4,7 +4,6 @@ import RetrieveFAQs from '../../service/notion/RetrieveFAQs';
 import discordServerIds from '../../service/constants/discordServerIds';
 import { LogUtils } from '../../utils/Log';
 import ServiceUtils from '../../utils/ServiceUtils';
-import { command } from '../../utils/SentryUtils';
 const trimPageId = process.env.FAQS_PAGE_ID.replace(/-/g, '');
 const FAQ_URL = `https://www.notion.so/FAQs-${trimPageId}`;
 
@@ -28,7 +27,6 @@ export default class NotionFAQs extends SlashCommand {
 		});
 	}
 
-	@command
 	async run(ctx: CommandContext): Promise<any> {
 		LogUtils.logCommandStart(ctx);
 		// Ignores commands from bots

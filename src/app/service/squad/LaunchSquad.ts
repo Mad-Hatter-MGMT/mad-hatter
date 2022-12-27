@@ -420,10 +420,10 @@ const createEmbed = (member: GuildMember, title: string, description: string): E
 	Log.debug('squadUp createEmbed() invoked');
 
 	return new EmbedBuilder()
-		.setAuthor({name: member.user.username, iconURL: member.user.avatarURL()})
+		.setAuthor({ name: member.user.username, iconURL: member.user.avatarURL() })
 		.setTitle(title)
 		.setDescription(description)
-		.setFooter({text: randomUUID()})
+		.setFooter({ text: randomUUID() })
 		.setTimestamp();
 };
 
