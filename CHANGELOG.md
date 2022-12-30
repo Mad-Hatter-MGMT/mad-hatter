@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.4.7-PRE-RELEASE (2022-12-27)
+## 1.4.7-RELEASE (2022-12-30)
 
 1. Update `slash-create`
 2. Add initialization routine for slash-create event handlers to app.ts
