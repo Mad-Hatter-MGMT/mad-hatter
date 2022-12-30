@@ -1,11 +1,11 @@
 import { GuildBan } from 'discord.js';
 import { Db, InsertOneWriteOpResult, MongoError } from 'mongodb';
-import constants from '../service/constants/constants';
-import { Allowlist } from '../types/discord/Allowlist';
-import { DiscordEvent } from '../types/discord/DiscordEvent';
-import ServiceUtils from '../utils/ServiceUtils';
-import Log, { LogUtils } from '../utils/Log';
-import MongoDbUtils from '../utils/MongoDbUtils';
+import constants from '../../service/constants/constants';
+import { Allowlist } from '../../types/discord/Allowlist';
+import { DiscordEvent } from '../../types/discord/DiscordEvent';
+import ServiceUtils from '../../utils/ServiceUtils';
+import Log, { LogUtils } from '../../utils/Log';
+import MongoDbUtils from '../../utils/MongoDbUtils';
 
 export default class implements DiscordEvent {
 	name = 'guildBanRemove';

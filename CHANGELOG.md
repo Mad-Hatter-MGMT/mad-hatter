@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.4.7-RELEASE (2022-12-30)
+
+1. Update `slash-create`
+2. Add initialization routine for slash-create event handlers to app.ts
+3. Move event handlers for discordjs and slash-create into separate folders
+4. Update SquadUp feature to use buttons instead of emoji reactions
+5. Remove message reaction event handlers and intents because not used
+6. Remove remaining POAP distribution files
+7. Remove axios as a dependency
+
 ## 1.4.6-RELEASE (2022-12-20)
 
 1. Update Sentry DSN key in `.env.template`

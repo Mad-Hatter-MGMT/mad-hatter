@@ -5,28 +5,32 @@ import {
 	TextChannel,
 	User,
 	Message,
+	MessageActionRow,
+	MessageButton,
+	EmbedField,
 } from 'discord.js';
-import { CommandContext } from 'slash-create';
+import { CommandContext, ComponentContext } from 'slash-create';
 import Log, { LogUtils } from '../../utils/Log';
 import SquadUtils from '../../utils/SquadUtils';
 import ValidationError from '../../errors/ValidationError';
 import client from '../../app';
 import channelIds from '../constants/channelIds';
-import { Db } from 'mongodb';
+import { Db, Collection } from 'mongodb';
 import dbInstance from '../../utils/MongoDbUtils';
 import constants from '../constants/constants';
 import { randomUUID } from 'crypto';
+import { ComponentMeta } from '../../events/slash-create/ComponentInteraction';
 
 export default async (member: GuildMember, ctx?: CommandContext): Promise<void> => {
 	ctx?.send({ content: `Hi, ${ctx.user.mention}! I sent you a DM with more information.`, ephemeral: true });
 
-	await getTitle(member, ctx);
+	await getTitle(member.user, ctx);
 };
 
-const getTitle = async (member: GuildMember, ctx?: CommandContext): Promise<void> => {
+const getTitle = async (user: User, ctx?: CommandContext): Promise<void> => {
 	Log.debug('squadUp invoked getTitle()');
 
-	const dmChannel: DMChannel = await member.user.createDM();
+	const dmChannel: DMChannel = await user.createDM();
 
 	Log.debug('squadUp getTitle() - about to send DM to user');
 	let getTitlePrompt: Message;
@@ -46,9 +50,9 @@ const getTitle = async (member: GuildMember, ctx?: CommandContext): Promise<void
 	collector.on('collect', async (msg) => {
 
 		try {
-			await SquadUtils.validateTitle(member, msg.content);
+			await SquadUtils.validateTitle(user, msg.content);
 
-			await getDescription(member, msg.content);
+			await getDescription(user, msg.content);
 
 			return;
 
@@ -57,7 +61,7 @@ const getTitle = async (member: GuildMember, ctx?: CommandContext): Promise<void
 
 				Log.debug('squadUp title validation failed');
 
-				await getTitle(member);
+				await getTitle(user);
 			}
 			return;
 		}
@@ -78,10 +82,10 @@ const getTitle = async (member: GuildMember, ctx?: CommandContext): Promise<void
 	});
 };
 
-const getDescription = async (member: GuildMember, title: string): Promise<void> => {
+const getDescription = async (user: User, title: string): Promise<void> => {
 	Log.debug('squadUp invoked getDescription()');
 
-	const dmChannel: DMChannel = await member.user.createDM();
+	const dmChannel: DMChannel = await user.createDM();
 
 	Log.debug('squadUp getDescription() - about to send input prompt DM to user');
 
@@ -92,17 +96,15 @@ const getDescription = async (member: GuildMember, title: string): Promise<void>
 	collector.on('collect', async (msg) => {
 
 		try {
-			await SquadUtils.validateSummary(member, msg.content);
+			await SquadUtils.validateSummary(user, msg.content);
 
 			Log.debug('squadUp summary valid');
 
-			const squadEmbed = createEmbed(member, title, msg.content);
+			const squadEmbed = createEmbed(user, title, msg.content);
 
 			Log.debug('squadUp getDescription() - about to send preview embed DM to user');
 
-			await dmChannel.send({ content: 'Preview: ', embeds: [squadEmbed] });
-
-			await xPostConfirm(member, title, msg.content, squadEmbed);
+			await xPostConfirm(user, squadEmbed);
 
 			return;
 
@@ -110,7 +112,7 @@ const getDescription = async (member: GuildMember, title: string): Promise<void>
 			if (e instanceof ValidationError) {
 				Log.debug('squadUp summary validation failed');
 
-				await getDescription(member, title);
+				await getDescription(user, title);
 			}
 
 			return;
@@ -133,86 +135,71 @@ const getDescription = async (member: GuildMember, title: string): Promise<void>
 	});
 };
 
-const xPostConfirm = async (member, title, description, squadEmbed): Promise<void> => {
+export const handleInteractionConfirm = async (componentContext: ComponentContext, meta: ComponentMeta): Promise<void> => {
+	const emoji = meta.label;
+	const user = await client.users.fetch(componentContext.user.id);
+	const dmChannel = await user.createDM();
+	const msg = await dmChannel.messages.fetch(componentContext.message.id);
+	const squadEmbed = msg.embeds[0];
+
+	if (emoji === '📮') {
+		Log.debug('squadUp handleInteractionConfirm 📮 selected');
+
+		return getCrossPostChannels(user, squadEmbed, componentContext);
+
+	} else if (emoji === '👍') {
+		Log.debug('squadUp handleInteractionConfirm 👍 selected');
+
+		return postSquad(user, squadEmbed, meta, componentContext);
+
+	} else if (emoji === '🔃') {
+		Log.debug('squadUp handleInteractionConfirm 🔃 selected');
+
+		await componentContext.send({ content: 'Let\'s start over.' });
+
+		return getTitle(user);
+
+	} else if (emoji === '❌') {
+		Log.debug('squadUp handleInteractionConfirm ❌ selected');
+
+		await componentContext.send({ content: 'Command cancelled.' });
+
+		return;
+	}
+};
+
+const xPostConfirm = async (user: User, squadEmbed: MessageEmbed): Promise<void> => {
 	Log.debug('squadUp invoked xPostConfirm()');
 
-	const dmChannel: DMChannel = await member.user.createDM();
+	const dmChannel: DMChannel = await user.createDM();
 
 	Log.debug('squadUp xPostConfirm() - about to send confirmation prompt DM to user');
 
-	const xPostConfirmMsg = await dmChannel.send({ content: 'Would you like to cross post the Squad in other channels? \n' +
+	const row = new MessageActionRow();
+
+	for (const emoji of ['👍', '📮', '❌', '🔃']) {
+		row.addComponents(
+			new MessageButton()
+				.setCustomId(`squadUp:xPostConfirm:${emoji}`)
+				.setLabel(`${emoji}`)
+				.setStyle('SUCCESS'),
+		);
+	}
+
+	await dmChannel.send({ content: 'Would you like to cross post the Squad in other channels? \n' +
 				'👍 - Post now, without cross posting\n' +
 				'📮 - Select cross post channels\n' +
 				'🔃 - Start over\n' +
-				'❌ - Abort' });
-
-	const filter = (reaction, user) => {
-		return ['👍', '📮', '❌', '🔃'].includes(reaction.emoji.name) && !user.bot;
-	};
-
-	await xPostConfirmMsg.react('👍');
-	await xPostConfirmMsg.react('📮');
-	await xPostConfirmMsg.react('🔃');
-	await xPostConfirmMsg.react('❌');
-
-	const collector = xPostConfirmMsg.createReactionCollector({ filter, max: 1, time: (10000 * 60), dispose: true });
-
-	collector.on('end', async (collected, reason) => {
-		if (reason === 'limit') {
-			Log.debug('squadUp xPostConfirm valid reaction received');
-
-			for (const reac of collected.values()) {
-				const users = await reac.users.fetch();
-
-				if (users.has(member.user.id)) {
-					if (reac.emoji.name === '📮') {
-						Log.debug('squadUp xPostConfirm 📮 selected');
-
-						await getCrossPostChannels(member, squadEmbed);
-
-						return;
-					} else if (reac.emoji.name === '👍') {
-						Log.debug('squadUp xPostConfirm 👍 selected');
-
-						await postSquad(member, squadEmbed, []);
-
-						return;
-					} else if (reac.emoji.name === '🔃') {
-						Log.debug('squadUp xPostConfirm 🔃 selected');
-
-						await dmChannel.send({ content: 'Let\'s start over.' });
-
-						await getTitle(member);
-
-						return;
-					} else if (reac.emoji.name === '❌') {
-						Log.debug('squadUp xPostConfirm ❌ selected');
-
-						await dmChannel.send({ content: 'Command cancelled.' });
-
-						return;
-					}
-				}
-			}
-		} else {
-			if ((xPostConfirmMsg.id === dmChannel.lastMessageId) && (reason === 'time')) {
-				Log.debug('squadUp xPostConfirm reaction collector timed out');
-
-				await dmChannel.send('The conversation timed out.');
-
-			}
-
-			if (!['time'].includes(reason)) {
-				Log.debug(`Squad xPostConfirmMsg collector stopped for unknown reason: ${reason}`);
-			}
-		}
+				'❌ - Abort',
+	components: [row],
+	embeds: [squadEmbed],
 	});
 };
 
-const finalConfirm = async (member, squadEmbed, xChannelList): Promise<void> => {
+const finalConfirm = async (user: User, squadEmbed: MessageEmbed, xChannelList: string[]): Promise<void> => {
 	Log.debug('squadUp invoked finalConfirm()');
 
-	const dmChannel: DMChannel = await member.user.createDM();
+	const dmChannel: DMChannel = await user.createDM();
 
 	Log.debug('squadUp finalConfirm() - about to send confirmation prompt DM to user');
 
@@ -226,83 +213,60 @@ const finalConfirm = async (member, squadEmbed, xChannelList): Promise<void> => 
 		}
 	}
 
-	const finalConfirmMsg = await dmChannel.send({ content:
+	const row = new MessageActionRow();
+
+	for (const emoji of ['👍', '❌', '🔃']) {
+		row.addComponents(
+			new MessageButton()
+				.setCustomId(`squadUp:finalConfirm:${emoji}:${xChannelList.toString()}`)
+				.setLabel(`${emoji}`)
+				.setStyle('SUCCESS'),
+		);
+	}
+
+	await dmChannel.send({ content:
 			'👍 - Good to go, post now.\n' +
 			'🔃 - I want to change something - start over\n' +
-			'❌ - Abort' });
-
-	const filter = (reaction, user) => {
-		return ['👍', '❌', '🔃'].includes(reaction.emoji.name) && !user.bot;
-	};
-
-	await finalConfirmMsg.react('👍');
-	await finalConfirmMsg.react('🔃');
-	await finalConfirmMsg.react('❌');
-
-	const collector = finalConfirmMsg.createReactionCollector({ filter, max: 1, time: (10000 * 60), dispose: true });
-
-	collector.on('end', async (collected, reason) => {
-		if (reason === 'limit') {
-			for (const reac of collected.values()) {
-				const users = await reac.users.fetch();
-
-				if (users.has(member.user.id)) {
-					if (reac.emoji.name === '👍') {
-						Log.debug('squadUp finalConfirm() received 👍 reaction');
-
-						await postSquad(member, squadEmbed, xChannelList);
-
-						return;
-					} else if (reac.emoji.name === '🔃') {
-						Log.debug('squadUp finalConfirm() received 🔃 reaction');
-
-						await dmChannel.send({ content: 'Let\'s start over.' });
-
-						await getTitle(member);
-
-						return;
-					} else if (reac.emoji.name === '❌') {
-						Log.debug('squadUp finalConfirm() received ❌ reaction');
-
-						await dmChannel.send({ content: 'Command cancelled.' });
-
-						return;
-					}
-				}
-			}
-		} else {
-			if ((finalConfirmMsg.id === dmChannel.lastMessageId) && (reason === 'time')) {
-				Log.debug('squadUp finalConfirm() reaction collector timed out');
-				await dmChannel.send('The conversation timed out.');
-			}
-
-			if (!['time'].includes(reason)) {
-				Log.debug(`Squad finalConfirmMsg collector stopped for unknown reason: ${reason}`);
-			}
-		}
+			'❌ - Abort',
+	components: [row],
+	embeds: [squadEmbed],
 	});
 };
 
-const postSquad = async (member, squadEmbed, xChannelList): Promise<void> => {
+const postSquad = async (user: User, squadEmbed: MessageEmbed, meta: ComponentMeta, componentContext: ComponentContext): Promise<void> => {
 	Log.debug('squadUp postSquad() invoked');
 
-	const dmChannel: DMChannel = await member.user.createDM();
+	const dmChannel: DMChannel = await user.createDM();
 
 	const squadChannel = await client.channels.fetch(channelIds.SQUAD) as TextChannel;
 
+	const squadId = randomUUID();
+
+	const row = new MessageActionRow();
+
+	for (const emoji of ['🙋', '❌']) {
+		row.addComponents(
+			new MessageButton()
+				.setCustomId(`squadUp:postSquad:${emoji}:${squadId}`)
+				.setLabel(`${emoji}`)
+				.setStyle('SUCCESS'),
+		);
+	}
+
 	let squadMsg: Message;
 	try {
-		squadMsg = await squadChannel.send({ embeds: [squadEmbed] });
+		squadMsg = await squadChannel.send({ embeds: [squadEmbed], components: [row] });
 	} catch (e) {
 		LogUtils.logError('squadUp postSquad() failed to post to squad channel', e);
-		await dmChannel.send(`Failed to post in <#${channelIds.SQUAD}>, please check channel permissions and try again.`).catch();
+		await componentContext.send(`Failed to post in <#${channelIds.SQUAD}>, please check channel permissions and try again.`).catch();
 		return;
 	}
 
-	await dbCreateSquad(squadEmbed, member.user.id, squadMsg);
+	await dbCreateSquad(squadId, squadEmbed, user.id, squadMsg);
 
-	await squadMsg.react('🙋');
-	await squadMsg.react('❌');
+	let xChannelList: string[];
+	if (meta.data) xChannelList = meta.data.split(',');
+	else xChannelList = [];
 
 	if (xChannelList.length > 0) {
 		Log.debug('squadUp postSquad() cross posting');
@@ -324,15 +288,15 @@ const postSquad = async (member, squadEmbed, xChannelList): Promise<void> => {
 	}
 	Log.debug('squadUp postSquad() about to send success message to user via DM');
 
-	await dmChannel.send(`All done! Your squad assemble has been posted. Check it out in <#${channelIds.SQUAD}>`);
+	await componentContext.send(`All done! Your squadUp has been posted. Check it out in <#${channelIds.SQUAD}>`);
 
 };
 
-const dbCreateSquad = async (squadEmbed, userId, squadMsg) => {
+const dbCreateSquad = async (squadId: string, squadEmbed: MessageEmbed, userId: string, squadMsg: Message): Promise<void> => {
 	Log.debug('squadUp dbCreateSquad() invoked');
 
 	const updateDoc = {
-		_id: squadEmbed.footer.text,
+		_id: squadId,
 		guildId: squadMsg.guild.id,
 		messageId: squadMsg.id,
 		authorId: userId,
@@ -350,91 +314,184 @@ const dbCreateSquad = async (squadEmbed, userId, squadMsg) => {
 	await dbSquad.insertOne(updateDoc);
 };
 
-const dbClaimSquad = async (squadId, userId, toggle) => {
-	Log.debug('squadUp dbClaimSquad() invoked');
+interface SquadBase {
+	squadId: string,
+	squadEmbed: MessageEmbed,
+	squadMessage: Message,
+	dbSquad: Collection<any>,
+}
+
+interface SquadClaim extends SquadBase{
+	userId: string,
+	claim: boolean,
+	record: any,
+}
+
+interface SquadStatus extends SquadBase{
+	buttonLabels: string[],
+	setActive: boolean,
+}
+
+export const handleInteractionClaim = async (componentContext: ComponentContext, meta: ComponentMeta): Promise<void> => {
+
+	const user = await client.users.fetch(componentContext.user.id);
+
+	const squadChannel = await client.channels.fetch(channelIds.SQUAD) as TextChannel;
+
+	const squadMessage = await squadChannel.messages.fetch(componentContext.message.id);
 
 	const db: Db = await dbInstance.connect(constants.DB_NAME_DEGEN);
 
-	const dbSquad = db.collection(constants.DB_COLLECTION_SQUAD);
+	const squadBase = {
+		squadId: meta.data,
+		squadMessage: squadMessage,
+		squadEmbed: squadMessage.embeds[0],
+		dbSquad: db.collection(constants.DB_COLLECTION_SQUAD),
+	};
 
-	const record = await dbSquad.findOne({ '_id': squadId });
+	const emoji = meta.label;
 
-	const insertDoc = record.claimedBy;
+	Log.debug(`SquadUp handleInteractionClaim(), squadId: ${squadBase.squadId} \nfetching db record`);
 
-	switch(toggle) {
-	case 'CLAIM':
-		Log.debug('squadUp dbClaimSquad() case CLAIM');
-		insertDoc[userId] = Date.now();
+	const record = await squadBase.dbSquad.findOne({ '_id': squadBase.squadId });
+
+	let msgContent: string;
+
+	if (emoji === '🙋') {
+		Log.debug('squadUp handleInteractionClaim 🙋 selected');
+
+		const squadClaim: SquadClaim = {
+			...squadBase,
+			userId: user.id,
+			claim: (!record.claimedBy[user.id]),
+			record: record,
+		};
+
+		squadClaim.claim ?
+			msgContent = 'Your application was recorded. The organizer will get in touch with you when the project starts.' :
+			msgContent = 'Application withdrawn';
+
+		await interactionClaimSquad(squadClaim);
+
+	} else if (emoji === '❌') {
+		Log.debug('squadUp handleInteractionClaim ❌ selected');
+
+		const squadStatus: SquadStatus = {
+			...squadBase,
+			buttonLabels: ['🔃'],
+			setActive: false,
+		};
+
+		msgContent = 'Squad halted';
+
+		await interactionSetActiveSquad(squadStatus);
+
+	} else if (emoji === '🔃') {
+		Log.debug('squadUp handleInteractionClaim 🔃 selected');
+
+		const squadStatus: SquadStatus = {
+			...squadBase,
+			buttonLabels: ['🙋', '❌'],
+			setActive: true,
+		};
+
+		msgContent = 'Squad restarted';
+
+		await interactionSetActiveSquad(squadStatus);
+	}
+
+	componentContext.send({ content: msgContent });
+};
+
+const interactionClaimSquad = async (squadClaim: SquadClaim): Promise<void> => {
+	Log.debug(`squadUp interactionClaimSquad() claim=${squadClaim.claim}`);
+
+	const insertDoc = squadClaim.record.claimedBy;
+
+	const matchesEl = (el) => {
+		return el.value === `🙋 - <@${squadClaim.userId}>`;
+	};
+
+	let updateEmbed: MessageEmbed;
+	let fields: EmbedField[];
+
+	switch(squadClaim.claim) {
+	case true:
+		if (squadClaim.squadEmbed.fields.length <= 24) {
+			Log.debug('squadUp interactionClaimSquad() updating embed');
+		
+			updateEmbed = squadClaim.squadEmbed.addField('\u200b', `🙋 - <@${squadClaim.userId}>`, false);
+				
+		} else {
+			Log.error('squadUp handleInteractionClaim() failed to update embed: max fields exceeded');
+
+			updateEmbed = squadClaim.squadEmbed;
+		}
+
+		insertDoc[squadClaim.userId] = Date.now();
+
 		break;
-	case 'UNCLAIM':
-		Log.debug('squadUp dbClaimSquad() case UNCLAIM');
-		delete insertDoc[userId];
+
+	case false:
+		fields = squadClaim.squadEmbed.fields;
+
+		fields.splice(fields.findIndex(matchesEl), 1);
+
+		updateEmbed = squadClaim.squadEmbed;
+
+		updateEmbed.fields = fields;
+
+		delete insertDoc[squadClaim.userId];
+
 		break;
 	}
-	await dbSquad.updateOne({ _id: squadId }, { $set: { claimedBy: insertDoc } }, { upsert: true });
+
+	await squadClaim.dbSquad.updateOne({ _id: squadClaim.squadId }, { $set: { claimedBy: insertDoc } }, { upsert: true });
+
+	await squadClaim.squadMessage.edit({ embeds:[updateEmbed] });
 };
 
-export const claimSquad = async (user: User, squadMsg: Message, toggle: string): Promise<void> => {
-	Log.debug('squadUp claimSquad() invoked');
-
-	const db: Db = await dbInstance.connect(constants.DB_NAME_DEGEN);
-
-	const dbSquad = db.collection(constants.DB_COLLECTION_SQUAD);
-
-	const squad = await dbSquad.findOne({ 'messageId': squadMsg.id });
-
-	if (user.id in squad.claimedBy) return ;
-
-	if (squadMsg.embeds[0].fields.length <= 24) {
-		Log.debug('squadUp claimSquad() valid to claim');
-
-		const updateEmbed = squadMsg.embeds[0].addField('\u200b', `🙋 - <@${user.id}>`, false);
-
-		await dbClaimSquad(updateEmbed.footer.text, user.id, toggle);
-
-		await squadMsg.edit({ embeds:[updateEmbed] });
-	}
-};
-
-export const unclaimSquad = async (user: User, squadMsg: Message, toggle: string): Promise<void> => {
-	Log.debug('squadUp unclaimSquad() invoked');
-
-	const fields = squadMsg.embeds[0].fields;
-
-	fields.splice(fields.findIndex(matchesEl), 1);
-
-	function matchesEl(el) {
-		return el.value === `🙋 - <@${user.id}>`;
+const interactionSetActiveSquad = async (squadStatus: SquadStatus) => {
+	const row = new MessageActionRow();
+	for (const emoji of squadStatus.buttonLabels) {
+		row.addComponents(
+			new MessageButton()
+				.setCustomId(`squadUp:postSquad:${emoji}:${squadStatus.squadId}`)
+				.setLabel(`${emoji}`)
+				.setStyle('SUCCESS'),
+		);
 	}
 
-	const updateEmbed = squadMsg.embeds[0];
+	await squadStatus.squadMessage.edit({ embeds:[squadStatus.squadEmbed], components: [row] })
+		.catch(e => LogUtils.logError('squadUp handleInteractionClaim() failed to edit SquadMessage', e));
 
-	updateEmbed.fields = fields;
 
-	await dbClaimSquad(updateEmbed.footer.text, user.id, toggle);
-
-	await squadMsg.edit({ embeds:[updateEmbed] });
+	const filter = { _id: squadStatus.squadId };
+	const update = { $set: { active: squadStatus.setActive } };
+	const options = { upsert: true };
+	await squadStatus.dbSquad.updateOne(filter, update, options)
+		.catch(e => LogUtils.logError('squadUp handleInteractionClaim() failed to update db', e));
+		
 };
 
-const createEmbed = (member: GuildMember, title: string, description: string): MessageEmbed => {
+const createEmbed = (user: User, title: string, description: string): MessageEmbed => {
 	Log.debug('squadUp createEmbed() invoked');
 
 	return new MessageEmbed()
-		.setAuthor(member.user.username, member.user.avatarURL())
+		.setAuthor(user.username, user.avatarURL())
 		.setTitle(title)
 		.setDescription(description)
-		.setFooter(randomUUID())
 		.setTimestamp();
 };
 
-const getCrossPostChannels = async (member: GuildMember, squadEmbed) => {
+const getCrossPostChannels = async (user: User, squadEmbed: MessageEmbed, componentContext: ComponentContext) => {
 	Log.debug('squadUp getCrossPostChannels() invoked');
 
-	const dmChannel: DMChannel = await member.user.createDM();
+	const dmChannel: DMChannel = await user.createDM();
 
 	Log.debug('squadUp getCrossPostChannels() about to send DM to user: xPost channel list input prompt');
 
-	const channelListInputPrompt = await dmChannel.send({ content: 'Please send me a list of comma separated channel Id\'s' });
+	const channelListInputPrompt = await componentContext.send({ content: 'Please send me a list of comma separated channel Id\'s' });
 
 	const collector = dmChannel.createMessageCollector({ max: 1, time: (20000 * 60), dispose: true });
 
@@ -464,7 +521,7 @@ const getCrossPostChannels = async (member: GuildMember, squadEmbed) => {
 			}
 
 			Log.debug('squadUp getCrossPostChannels() Input transformation complete');
-			await finalConfirm(member, squadEmbed, xPostChannels);
+			await finalConfirm(user, squadEmbed, xPostChannels);
 
 			return;
 
@@ -472,7 +529,7 @@ const getCrossPostChannels = async (member: GuildMember, squadEmbed) => {
 			LogUtils.logError('squadUp getCrossPostChannels() input transformation failed', e);
 
 			if (e instanceof ValidationError) {
-				await getCrossPostChannels(member, squadEmbed);
+				await getCrossPostChannels(user, squadEmbed, componentContext);
 			}
 			return;
 		}
@@ -481,7 +538,7 @@ const getCrossPostChannels = async (member: GuildMember, squadEmbed) => {
 	collector.on('end', async (_, reason) => {
 
 		// if channelListInputPrompt is not the last message, time out silently.
-		if ((channelListInputPrompt.id === dmChannel.lastMessageId) && (reason === 'time')) {
+		if (((channelListInputPrompt as unknown as Message).id === dmChannel.lastMessageId) && (reason === 'time')) {
 			await dmChannel.send('The conversation timed out.');
 		}
 
@@ -532,13 +589,18 @@ export const checkExpiration = async (): Promise<void> => {
 							await dmChannel.send({ content: 'Squad has been completed. Time to get in touch with your team! ' +
 										`<https://discord.com/channels/${squad.guildId}/${channelIds.SQUAD}/${squad.messageId}>` });
 
-							const squadMsg = await squadChannel.messages.fetch(squad.messageId);
+							try {
+								const squadMsg = await squadChannel.messages.fetch(squad.messageId);
 
-							await squadMsg.reactions.removeAll();
+								await squadMsg.reactions.removeAll();
+	
+								await squadMsg.react('🔃');
+	
+								await dbSquad.updateOne({ _id: squad._id }, { $set: { active: false } }, { upsert: true });
 
-							await squadMsg.react('🔃');
-
-							await dbSquad.updateOne({ _id: squad._id }, { $set: { active: false } }, { upsert: true });
+							} catch (e) {
+								Log.debug('squadUp checkExpiration() failed to update expired squad');
+							}
 						}
 					}
 				}
