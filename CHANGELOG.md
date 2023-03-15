@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5-PRE-RELEASE (2023-03-15)
+
+1. Bump json5 from 2.2.0 to 2.2.3 per Dependabot alert
+
 ## 1.4.7-RELEASE (2022-12-30)
 
 1. Update `slash-create`
