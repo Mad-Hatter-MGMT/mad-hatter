@@ -1,13 +1,14 @@
 import {
+	ActionRowBuilder,
 	DMChannel,
-	GuildMember,
 	EmbedBuilder,
-	TextChannel,
-	User,
+	EmbedField,
+	GuildMember,
 	Message,
 	MessageActionRow,
 	MessageButton,
-	EmbedField,
+	TextChannel,
+	User,
 } from 'discord.js';
 import { CommandContext, ComponentContext } from 'slash-create';
 import Log, { LogUtils } from '../../utils/Log';
@@ -168,7 +169,7 @@ export const handleInteractionConfirm = async (componentContext: ComponentContex
 	}
 };
 
-const xPostConfirm = async (user: User, squadEmbed: MessageEmbed): Promise<void> => {
+const xPostConfirm = async (user: User, squadEmbed: EmbedBuilder): Promise<void> => {
 	Log.debug('squadUp invoked xPostConfirm()');
 
 	const dmChannel: DMChannel = await user.createDM();
@@ -196,7 +197,7 @@ const xPostConfirm = async (user: User, squadEmbed: MessageEmbed): Promise<void>
 	});
 };
 
-const finalConfirm = async (user: User, squadEmbed: MessageEmbed, xChannelList: string[]): Promise<void> => {
+const finalConfirm = async (user: User, squadEmbed: EmbedBuilder, xChannelList: string[]): Promise<void> => {
 	Log.debug('squadUp invoked finalConfirm()');
 
 	const dmChannel: DMChannel = await user.createDM();
@@ -233,7 +234,7 @@ const finalConfirm = async (user: User, squadEmbed: MessageEmbed, xChannelList: 
 	});
 };
 
-const postSquad = async (user: User, squadEmbed: MessageEmbed, meta: ComponentMeta, componentContext: ComponentContext): Promise<void> => {
+const postSquad = async (user: User, squadEmbed: EmbedBuilder, meta: ComponentMeta, componentContext: ComponentContext): Promise<void> => {
 	Log.debug('squadUp postSquad() invoked');
 
 	const dmChannel: DMChannel = await user.createDM();
@@ -292,7 +293,7 @@ const postSquad = async (user: User, squadEmbed: MessageEmbed, meta: ComponentMe
 
 };
 
-const dbCreateSquad = async (squadId: string, squadEmbed: MessageEmbed, userId: string, squadMsg: Message): Promise<void> => {
+const dbCreateSquad = async (squadId: string, squadEmbed: EmbedBuilder, userId: string, squadMsg: Message): Promise<void> => {
 	Log.debug('squadUp dbCreateSquad() invoked');
 
 	const updateDoc = {
@@ -316,7 +317,7 @@ const dbCreateSquad = async (squadId: string, squadEmbed: MessageEmbed, userId: 
 
 interface SquadBase {
 	squadId: string,
-	squadEmbed: MessageEmbed,
+	squadEmbed: EmbedBuilder,
 	squadMessage: Message,
 	dbSquad: Collection<any>,
 }
@@ -412,7 +413,7 @@ const interactionClaimSquad = async (squadClaim: SquadClaim): Promise<void> => {
 		return el.value === `🙋 - <@${squadClaim.userId}>`;
 	};
 
-	let updateEmbed: MessageEmbed;
+	let updateEmbed: EmbedBuilder;
 	let fields: EmbedField[];
 
 	switch(squadClaim.claim) {
@@ -474,17 +475,17 @@ const interactionSetActiveSquad = async (squadStatus: SquadStatus) => {
 		
 };
 
-const createEmbed = (user: User, title: string, description: string): MessageEmbed => {
+const createEmbed = (user: User, title: string, description: string): EmbedBuilder => {
 	Log.debug('squadUp createEmbed() invoked');
 
-	return new MessageEmbed()
+	return new EmbedBuilder()
 		.setAuthor(user.username, user.avatarURL())
 		.setTitle(title)
 		.setDescription(description)
 		.setTimestamp();
 };
 
-const getCrossPostChannels = async (user: User, squadEmbed: MessageEmbed, componentContext: ComponentContext) => {
+const getCrossPostChannels = async (user: User, squadEmbed: EmbedBuilder, componentContext: ComponentContext) => {
 	Log.debug('squadUp getCrossPostChannels() invoked');
 
 	const dmChannel: DMChannel = await user.createDM();

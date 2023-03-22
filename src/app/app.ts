@@ -8,8 +8,8 @@ import Discord, {
 	Client,
 	ClientOptions,
 	GatewayDispatchEvents,
-	Partials,
 	GatewayIntentBits,
+	Partials,
 } from 'discord.js';
 import path from 'path';
 import fs from 'fs';
@@ -46,16 +46,16 @@ client.login(process.env.DISCORD_BOT_TOKEN).catch(Log.error);
 function initializeClient(): Client {
 	const clientOptions: ClientOptions = {
 		intents: [
-			Intents.FLAGS.GUILDS,
-			Intents.FLAGS.GUILD_BANS,
-			Intents.FLAGS.GUILD_MEMBERS,
-			Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
-			Intents.FLAGS.GUILD_VOICE_STATES,
-			Intents.FLAGS.GUILD_PRESENCES,
-			Intents.FLAGS.GUILD_MESSAGES,
-			Intents.FLAGS.DIRECT_MESSAGES,
+			GatewayIntentBits.Guilds,
+			GatewayIntentBits.GuildBans,
+			GatewayIntentBits.GuildMembers,
+			GatewayIntentBits.GuildEmojisAndStickers,
+			GatewayIntentBits.GuildVoiceStates,
+			GatewayIntentBits.GuildPresences,
+			GatewayIntentBits.GuildMessages,
+			GatewayIntentBits.DirectMessages,
 		],
-		partials: ['MESSAGE', 'CHANNEL', 'USER'],
+		partials: [Partials.Message, Partials.Channel, Partials.User],
 	};
 	return new Discord.Client(clientOptions);
 }
