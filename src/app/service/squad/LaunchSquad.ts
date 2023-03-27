@@ -1,12 +1,11 @@
 import {
 	ActionRowBuilder,
+	ButtonBuilder,
 	DMChannel,
 	EmbedBuilder,
 	EmbedField,
 	GuildMember,
 	Message,
-	MessageActionRow,
-	MessageButton,
 	TextChannel,
 	User,
 } from 'discord.js';
@@ -176,14 +175,14 @@ const xPostConfirm = async (user: User, squadEmbed: EmbedBuilder): Promise<void>
 
 	Log.debug('squadUp xPostConfirm() - about to send confirmation prompt DM to user');
 
-	const row = new MessageActionRow();
+	const row = new ActionRowBuilder();
 
 	for (const emoji of ['👍', '📮', '❌', '🔃']) {
 		row.addComponents(
-			new MessageButton()
+			new ButtonBuilder()
 				.setCustomId(`squadUp:xPostConfirm:${emoji}`)
 				.setLabel(`${emoji}`)
-				.setStyle('SUCCESS'),
+				.setStyle(3),
 		);
 	}
 
@@ -214,14 +213,14 @@ const finalConfirm = async (user: User, squadEmbed: EmbedBuilder, xChannelList: 
 		}
 	}
 
-	const row = new MessageActionRow();
+	const row = new ActionRowBuilder();
 
 	for (const emoji of ['👍', '❌', '🔃']) {
 		row.addComponents(
-			new MessageButton()
+			new ButtonBuilder()
 				.setCustomId(`squadUp:finalConfirm:${emoji}:${xChannelList.toString()}`)
 				.setLabel(`${emoji}`)
-				.setStyle('SUCCESS'),
+				.setStyle(3),
 		);
 	}
 
@@ -243,14 +242,14 @@ const postSquad = async (user: User, squadEmbed: EmbedBuilder, meta: ComponentMe
 
 	const squadId = randomUUID();
 
-	const row = new MessageActionRow();
+	const row = new ActionRowBuilder();
 
 	for (const emoji of ['🙋', '❌']) {
 		row.addComponents(
-			new MessageButton()
+			new ButtonBuilder()
 				.setCustomId(`squadUp:postSquad:${emoji}:${squadId}`)
 				.setLabel(`${emoji}`)
-				.setStyle('SUCCESS'),
+				.setStyle(3),
 		);
 	}
 
@@ -418,10 +417,10 @@ const interactionClaimSquad = async (squadClaim: SquadClaim): Promise<void> => {
 
 	switch(squadClaim.claim) {
 	case true:
-		if (squadClaim.squadEmbed.fields.length <= 24) {
+		if (squadClaim.squadEmbed.data.length <= 24) {
 			Log.debug('squadUp interactionClaimSquad() updating embed');
 		
-			updateEmbed = squadClaim.squadEmbed.addField('\u200b', `🙋 - <@${squadClaim.userId}>`, false);
+			updateEmbed = squadClaim.squadEmbed.addFields('\u200b', `🙋 - <@${squadClaim.userId}>`, false);
 				
 		} else {
 			Log.error('squadUp handleInteractionClaim() failed to update embed: max fields exceeded');
@@ -434,13 +433,13 @@ const interactionClaimSquad = async (squadClaim: SquadClaim): Promise<void> => {
 		break;
 
 	case false:
-		fields = squadClaim.squadEmbed.fields;
+		fields = squadClaim.squadEmbed.data;
 
 		fields.splice(fields.findIndex(matchesEl), 1);
 
 		updateEmbed = squadClaim.squadEmbed;
 
-		updateEmbed.fields = fields;
+		updateEmbed.data = fields;
 
 		delete insertDoc[squadClaim.userId];
 
@@ -453,10 +452,10 @@ const interactionClaimSquad = async (squadClaim: SquadClaim): Promise<void> => {
 };
 
 const interactionSetActiveSquad = async (squadStatus: SquadStatus) => {
-	const row = new MessageActionRow();
+	const row = new ActionRowBuilder();
 	for (const emoji of squadStatus.buttonLabels) {
 		row.addComponents(
-			new MessageButton()
+			new ButtonBuilder()
 				.setCustomId(`squadUp:postSquad:${emoji}:${squadStatus.squadId}`)
 				.setLabel(`${emoji}`)
 				.setStyle('SUCCESS'),
