@@ -53,7 +53,7 @@
         "uuid": "^8.3.2"
     },
     "devDependencies": {
-        "@shelf/jest-mongodb": "^2.1.0",
+        "@shelf/jest-mongodb": "^4.1.7",
         "@types/jest": "^29.5.0",
         "@types/mongodb": "^3.6.20",
         "@typescript-eslint/eslint-plugin": "^4.26.0",
