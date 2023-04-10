@@ -61,8 +61,8 @@ Open Discord User Settings, navigate to Advanced, and enable Developer Mode:
 
 Create a `.env` file in the project root directory using `.env.template` as a template.
 
-### Create a grafana account
-Visit [Grafana.com](https://grafana.com/) :
+### Setup grafana
+1. Visit [Grafana.com](https://grafana.com/) :
 
 ![](images/grafana-landing.png)
 
@@ -73,6 +73,43 @@ Sign in or create an account if you don't already have one. :
 Click `API keys` to create a new API key or use one you already have.
 Copy your API key and your username into the .env file:
 ![](images/grafana-create-api.png)
+
+### Setup MongoDB.
+
+1. Visit MongoDB [website](https://account.mongodb.com/account/login) to create an account or login to your account:
+
+2. create Project.:
+
+![](images/createdb.png)
+
+3. Create your project Database:
+
+![](images/deployproject.png)
+
+4. Setup your project details.: Username and password.
+NB: copy and save your username and password somewhere as this will be included in the .env file as MONGODB_USERNAME and MONGODB_PASS
+
+![](images/setFinish.png)
+
+5. Add IP address: 
+
+![](images/addIP.png)
+
+6. Complete setup. Click on the finish and close button:
+
+![](images/finishup.png)
+
+7. You should have a dashboard that looks likes this,
+Click on the connect button to get the connection link:
+![](images/dashboard.png)
+
+8. Click on Connect your application button to get your connections link (MONGODB_CLUSTER):
+![](images/connect.png)
+
+9. Copy your connection link.
+
+Copy your MONGODB_PREFIX and MONGODB_CLUSTER in to your .env file from the connection link provided has as specified in the image below:
+![](images/link-ex.png)
 
 
 | Variable | Description|

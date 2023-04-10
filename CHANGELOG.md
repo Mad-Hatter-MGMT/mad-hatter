@@ -5,6 +5,7 @@
 1. Bump json5 from 2.2.0 to 2.2.3 per Dependabot alert
 2. Bump webpack from 5.64.1 to 5.76.0 per Dependabot alert
 3. Changed Node engine from 16.x to 18.x 
+4. Update doc:developer.md to include grafana and mongodb setup
 
 ## 1.4.7-RELEASE (2022-12-30)
 
