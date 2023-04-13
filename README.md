@@ -33,7 +33,7 @@
 
 ## Development Setup
 ### Prerequisites
-- Install [Node.js 16.x](https://nodejs.org/en/) which includes [Node Package Manager](https://docs.npmjs.com/getting-started)
+- Install [Node.js 18.x](https://nodejs.org/en/) which includes [Node Package Manager](https://docs.npmjs.com/getting-started)
 - Install [Yarn 1.x](https://classic.yarnpkg.com/lang/en/docs/install)
 - Install [Docker Desktop](https://www.docker.com/products/docker-desktop) which includes Docker Engine, Docker CLI client, and Docker Compose.
 - Configure Discord application on the [Discord Developer Portal](https://discord.com/developers/applications).
