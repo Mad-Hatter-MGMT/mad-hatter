@@ -140,7 +140,7 @@ export const handleInteractionConfirm = async (componentContext: ComponentContex
 	const user = await client.users.fetch(componentContext.user.id);
 	const dmChannel = await user.createDM();
 	const msg = await dmChannel.messages.fetch(componentContext.message.id);
-	const squadEmbed = msg.embeds[0];
+	const squadEmbed = new EmbedBuilder(msg.embeds[0]);
 
 	if (emoji === '📮') {
 		Log.debug('squadUp handleInteractionConfirm 📮 selected');
@@ -168,6 +168,8 @@ export const handleInteractionConfirm = async (componentContext: ComponentContex
 	}
 };
 
+// https://discord.com/channels/222078108977594368/824411059443204127/1092535497559117864
+
 const xPostConfirm = async (user: User, squadEmbed: EmbedBuilder): Promise<void> => {
 	Log.debug('squadUp invoked xPostConfirm()');
 
@@ -175,7 +177,7 @@ const xPostConfirm = async (user: User, squadEmbed: EmbedBuilder): Promise<void>
 
 	Log.debug('squadUp xPostConfirm() - about to send confirmation prompt DM to user');
 
-	const row = new ActionRowBuilder();
+	const row = new ActionRowBuilder<ButtonBuilder>();
 
 	for (const emoji of ['👍', '📮', '❌', '🔃']) {
 		row.addComponents(
@@ -213,7 +215,7 @@ const finalConfirm = async (user: User, squadEmbed: EmbedBuilder, xChannelList: 
 		}
 	}
 
-	const row = new ActionRowBuilder();
+	const row = new ActionRowBuilder<ButtonBuilder>();
 
 	for (const emoji of ['👍', '❌', '🔃']) {
 		row.addComponents(
@@ -242,7 +244,7 @@ const postSquad = async (user: User, squadEmbed: EmbedBuilder, meta: ComponentMe
 
 	const squadId = randomUUID();
 
-	const row = new ActionRowBuilder();
+	const row = new ActionRowBuilder<ButtonBuilder>();
 
 	for (const emoji of ['🙋', '❌']) {
 		row.addComponents(
@@ -452,13 +454,13 @@ const interactionClaimSquad = async (squadClaim: SquadClaim): Promise<void> => {
 };
 
 const interactionSetActiveSquad = async (squadStatus: SquadStatus) => {
-	const row = new ActionRowBuilder();
+	const row = new ActionRowBuilder<ButtonBuilder>();
 	for (const emoji of squadStatus.buttonLabels) {
 		row.addComponents(
 			new ButtonBuilder()
 				.setCustomId(`squadUp:postSquad:${emoji}:${squadStatus.squadId}`)
 				.setLabel(`${emoji}`)
-				.setStyle('SUCCESS'),
+				.setStyle(3),
 		);
 	}
 
