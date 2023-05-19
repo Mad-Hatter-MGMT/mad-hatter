@@ -52,14 +52,65 @@ Invite link:
 https://discord.com/api/oauth2/authorize?client_id=<YOUR_CLIENT_ID_HERE>&permissions=399163616342&scope=applications.commands%20bot
 ```
 
-
 ### Enable Developer Mode
 
 Open Discord User Settings, navigate to Advanced, and enable Developer Mode:
 ![](images/discord_developer_mode.png)
 
 ## Setup local environment file
+
 Create a `.env` file in the project root directory using `.env.template` as a template.
+
+### Setup grafana
+1. Visit [Grafana.com](https://grafana.com/) :
+
+![](images/grafana-landing.png)
+
+Sign in or create an account if you don't already have one. :
+
+![](images/grafana-create-acct.png)
+
+Click `API keys` to create a new API key or use one you already have.
+Copy your API key and your username into the .env file:
+![](images/grafana-create-api.png)
+
+### Setup MongoDB.
+
+1. Visit MongoDB [website](https://account.mongodb.com/account/login) to create an account or login to your account:
+
+2. create Project.:
+
+![](images/createdb.png)
+
+3. Create your project Database:
+
+![](images/deployproject.png)
+
+4. Setup your project details.: Username and password.
+NB: copy and save your username and password somewhere as this will be included in the .env file as MONGODB_USERNAME and MONGODB_PASS
+
+![](images/setFinish.png)
+
+5. Add IP address: 
+
+![](images/addIP.png)
+
+6. Complete setup. Click on the finish and close button:
+
+![](images/finishup.png)
+
+7. You should have a dashboard that looks likes this,
+Click on the connect button to get the connection link:
+![](images/dashboard.png)
+
+8. Click on Connect your application button to get your connections link (MONGODB_CLUSTER):
+![](images/connect.png)
+
+9. Copy your connection link.
+
+Copy your MONGODB_PREFIX and MONGODB_CLUSTER in to your .env file from the connection link provided has as specified in the image below:
+![](images/link-ex.png)
+
 
 | Variable | Description|
 | --- | --- |  
@@ -73,6 +124,8 @@ Create a `.env` file in the project root directory using `.env.template` as a te
 | MONGODB_USERNAME | Omit if using Docker to build the application. |
 | MONGODB_PASS | Omit if using Docker to build the application. | 
 | MONGODB_CLUSTER | Omit if using Docker to build the application. |
+| LOKI_USER_NAME | Put in your grafana `username` here. | 
+| LOKI_PASSWORD | Put in your copied grafana `API key` here. |
 
 
 Example `.env` file (example uses random fake keys):
