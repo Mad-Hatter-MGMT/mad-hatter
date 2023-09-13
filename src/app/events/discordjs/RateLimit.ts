@@ -8,17 +8,19 @@ export default class implements DiscordEvent {
 	
 	async execute(rateLimitData: RateLimitData): Promise<any> {
 		try {
-			Log.warn(`rate limit reached timeout: ${rateLimitData.timeout}`, {
-				indexMeta: true,
-				meta: {
-					timeout: rateLimitData.timeout,
-					limit: rateLimitData.limit,
-					method: rateLimitData.method,
-					path: rateLimitData.path,
-					route: rateLimitData.route,
-					global: rateLimitData.global,
-				},
-			});
+			Log.warn(`rate limit reached timeout: ${rateLimitData.timeout}`,
+			// {
+			// 	indexMeta: true,
+			// 	meta: {
+			// 		timeout: rateLimitData.timeout,
+			// 		limit: rateLimitData.limit,
+			// 		method: rateLimitData.method,
+			// 		path: rateLimitData.path,
+			// 		route: rateLimitData.route,
+			// 		global: rateLimitData.global,
+			// 	},
+			// }
+			);
 		} catch (e) {
 			LogUtils.logError('failed to process event rateLimit', e);
 		}
