@@ -1,24 +1,37 @@
-import logdna, { Logger, LogOptions } from '@logdna/logger';
+// import logdna, { Logger, LogOptions } from '@logdna/logger';
 import apiKeys from '../service/constants/apiKeys';
 import { CommandContext } from 'slash-create';
 import * as Sentry from '@sentry/node';
+import pino from 'pino';
+import type { LokiOptions } from 'pino-loki';
 
-let logger: Logger;
+const transport = pino.transport({
+	target: 'pino-loki',
+	options: {
+		batching: true,
+		interval: 5,
+
+		host: 'https://my-loki-instance:3100',
+		basicAuth: {
+			username: apiKeys.lokiUserName,
+			password: apiKeys.lokiPassword,
+		},
+	},
+});
+
+let logger;
 
 try {
-	logger = logdna.createLogger(apiKeys.logDNAToken, {
-		app: apiKeys.logDNAAppName,
-		level: apiKeys.logDNADefault,
-	});
+	logger = pino(transport);
 	if (process.env.NODE_ENV != 'production' || !logger.info) {
 		// eslint-disable-next-line no-console
 		console.log('Logger initialized!');
 	} else {
-		logger.log('Logger initialized!');
+		logger.info('Logger initialized!');
 	}
 } catch (e) {
 	// eslint-disable-next-line no-console
-	console.log('Please setup LogDNA token.');
+	console.log('Please setup Pino token.');
 	// eslint-disable-next-line no-console
 	console.log(e);
 	throw new Error();
@@ -26,7 +39,7 @@ try {
 
 const Log = {
 
-	info(statement: string | any, options?: Omit<LogOptions, 'level'>): void {
+	info(statement: string | any, options?: Omit<LokiOptions, 'level'>): void {
 		if (process.env.NODE_ENV != 'production' || !logger.info) {
 			// eslint-disable-next-line no-console
 			console.log(statement);
@@ -39,7 +52,7 @@ const Log = {
 		}
 	},
 
-	warn(statement: string | any, options?: Omit<LogOptions, 'level'>): void {
+	warn(statement: string | any, options?: Omit<LokiOptions, 'level'>): void {
 		if (process.env.NODE_ENV != 'production' || !logger.warn) {
 			// eslint-disable-next-line no-console
 			console.log(statement);
@@ -52,7 +65,7 @@ const Log = {
 		}
 	},
 
-	debug(statement: string | any, options?: Omit<LogOptions, 'level'>): void {
+	debug(statement: string | any, options?: Omit<LokiOptions, 'level'>): void {
 		if (process.env.NODE_ENV != 'production' || !logger.debug) {
 			// eslint-disable-next-line no-console
 			console.debug(statement);
@@ -61,7 +74,7 @@ const Log = {
 		}
 	},
 
-	error(statement: string | any, options?: Omit<LogOptions, 'level'>): void {
+	error(statement: string | any, options?: Omit<LokiOptions, 'level'>): void {
 		if (process.env.NODE_ENV != 'production' || !logger.error) {
 			// eslint-disable-next-line no-console
 			console.error(statement);
@@ -74,7 +87,7 @@ const Log = {
 		}
 	},
 
-	fatal(statement: string | any, options?: Omit<LogOptions, 'level'>): void {
+	fatal(statement: string | any, options?: Omit<LokiOptions, 'level'>): void {
 		if (process.env.NODE_ENV != 'production' || !logger.fatal) {
 			// eslint-disable-next-line no-console
 			console.error(statement);
@@ -87,7 +100,7 @@ const Log = {
 		}
 	},
 
-	trace(statement: string | any, options?: Omit<LogOptions, 'level'>): void {
+	trace(statement: string | any, options?: Omit<LokiOptions, 'level'>): void {
 		if (process.env.NODE_ENV != 'production' || !logger.trace) {
 			// eslint-disable-next-line no-console
 			console.log(statement);
@@ -96,12 +109,12 @@ const Log = {
 		}
 	},
 
-	log(statement: string | any, options?: Omit<LogOptions, 'level'>): void {
+	log(statement: string | any, options?: Omit<LokiOptions, 'level'>): void {
 		if (process.env.NODE_ENV != 'production') {
 			// eslint-disable-next-line no-console
 			console.log(statement);
 		}
-		logger.log(statement, options);
+		logger.info(statement, options);
 		Sentry.addBreadcrumb({
 			level: Sentry.Severity.Log,
 			message: statement,
@@ -124,27 +137,31 @@ const Log = {
 
 export const LogUtils = {
 	logCommandStart(ctx: CommandContext): void {
-		Log.info(`/${ctx.commandName} ran ${ctx.user.username}#${ctx.user.discriminator}`, {
-			indexMeta: true,
-			meta: {
-				guildId: ctx.guildID,
-				userTag: `${ctx.user.username}#${ctx.user.discriminator}`,
-				userId: ctx.user.id,
-				params: ctx.options,
-			},
-		});
+		Log.info(`/${ctx.commandName} ran ${ctx.user.username}#${ctx.user.discriminator}`,
+		// {
+		// 	indexMeta: true,
+		// 	meta: {
+		// 		guildId: ctx.guildID,
+		// 		userTag: `${ctx.user.username}#${ctx.user.discriminator}`,
+		// 		userId: ctx.user.id,
+		// 		params: ctx.options,
+		// 	},
+		// }
+		);
 	},
 
 	logCommandEnd(ctx: CommandContext): void {
-		Log.info(`/${ctx.commandName} ended ${ctx.user.username}#${ctx.user.discriminator}`, {
-			indexMeta: true,
-			meta: {
-				guildId: ctx.guildID,
-				userTag: `${ctx.user.username}#${ctx.user.discriminator}`,
-				userId: ctx.user.id,
-				params: ctx.options,
-			},
-		});
+		Log.info(`/${ctx.commandName} ended ${ctx.user.username}#${ctx.user.discriminator}`,
+			// {
+			// 	indexMeta: true,
+			// 	meta: {
+			// 		guildId: ctx.guildID,
+			// 		userTag: `${ctx.user.username}#${ctx.user.discriminator}`,
+			// 		userId: ctx.user.id,
+			// 		params: ctx.options,
+			// 	},
+			// }
+		);
 	},
 
 	logError(message: string, error: Error | any, guildId?: string): void {
@@ -154,15 +171,17 @@ export const LogUtils = {
 					guildId: guildId,
 				},
 			});
-			Log.error(message, {
-				indexMeta: true,
-				meta: {
-					name: error?.name,
-					message: error?.message,
-					stack: error?.stack,
-					guildId: guildId,
-				},
-			});
+			Log.error(message,
+			// 	{
+			// 	indexMeta: true,
+			// 	meta: {
+			// 		name: error?.name,
+			// 		message: error?.message,
+			// 		stack: error?.stack,
+			// 		guildId: guildId,
+			// 	},
+			// }
+			);
 		} catch (e) {
 			Log.error(message);
 		}
