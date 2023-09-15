@@ -4,6 +4,7 @@ const apiKeys = Object.freeze({
 	logDNAToken: process.env.LOGDNA_TOKEN,
 	logDNAAppName: process.env.LOGDNA_APP_NAME,
 	logDNADefault: process.env.LOGDNA_DEFAULT_LEVEL,
+	lokiHost: process.env.LOKI_HOST,
 	lokiUserName: process.env.LOKI_USERNAME,
 	lokiPassword: process.env.LOKI_PASSWORD,
 });

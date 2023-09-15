@@ -1,4 +1,3 @@
-// import logdna, { Logger, LogOptions } from '@logdna/logger';
 import apiKeys from '../service/constants/apiKeys';
 import { CommandContext } from 'slash-create';
 import * as Sentry from '@sentry/node';
@@ -11,7 +10,7 @@ const transport = pino.transport({
 		batching: true,
 		interval: 5,
 
-		host: 'https://my-loki-instance:3100',
+		host: apiKeys.lokiHost,
 		basicAuth: {
 			username: apiKeys.lokiUserName,
 			password: apiKeys.lokiPassword,
@@ -23,15 +22,10 @@ let logger;
 
 try {
 	logger = pino(transport);
-	if (process.env.NODE_ENV != 'production' || !logger.info) {
-		// eslint-disable-next-line no-console
-		console.log('Logger initialized!');
-	} else {
-		logger.info('Logger initialized!');
-	}
+	logger.info('Logger initialized!');
 } catch (e) {
 	// eslint-disable-next-line no-console
-	console.log('Please setup Pino token.');
+	console.log('Please setup Pino basicAuth.');
 	// eslint-disable-next-line no-console
 	console.log(e);
 	throw new Error();
@@ -40,16 +34,11 @@ try {
 const Log = {
 
 	info(statement: string | any, options?: Omit<LokiOptions, 'level'>): void {
-		if (process.env.NODE_ENV != 'production' || !logger.info) {
-			// eslint-disable-next-line no-console
-			console.log(statement);
-		} else {
-			logger.info(statement, options);
-			Sentry.addBreadcrumb({
-				level: Sentry.Severity.Info,
-				message: statement,
-			});
-		}
+		logger.info(statement, options);
+		Sentry.addBreadcrumb({
+			level: Sentry.Severity.Info,
+			message: statement,
+		});
 	},
 
 	warn(statement: string | any, options?: Omit<LokiOptions, 'level'>): void {
@@ -69,6 +58,7 @@ const Log = {
 		if (process.env.NODE_ENV != 'production' || !logger.debug) {
 			// eslint-disable-next-line no-console
 			console.debug(statement);
+			logger.debug(statement, options);
 		} else {
 			logger.debug(statement, options);
 		}
@@ -78,6 +68,11 @@ const Log = {
 		if (process.env.NODE_ENV != 'production' || !logger.error) {
 			// eslint-disable-next-line no-console
 			console.error(statement);
+			logger.error(statement, options);
+			Sentry.addBreadcrumb({
+				level: Sentry.Severity.Error,
+				message: statement,
+			});
 		} else {
 			logger.error(statement, options);
 			Sentry.addBreadcrumb({
@@ -121,15 +116,6 @@ const Log = {
 		});
 	},
 
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-	addMetaProperty(key: string, value: any): void {
-		logger.addMetaProperty(key, value);
-	},
-
-	removeMetaProperty(key: string): void {
-		logger.removeMetaProperty(key);
-	},
-
 	flush(): void {
 		logger.flush();
 	},
@@ -138,29 +124,11 @@ const Log = {
 export const LogUtils = {
 	logCommandStart(ctx: CommandContext): void {
 		Log.info(`/${ctx.commandName} ran ${ctx.user.username}#${ctx.user.discriminator}`,
-		// {
-		// 	indexMeta: true,
-		// 	meta: {
-		// 		guildId: ctx.guildID,
-		// 		userTag: `${ctx.user.username}#${ctx.user.discriminator}`,
-		// 		userId: ctx.user.id,
-		// 		params: ctx.options,
-		// 	},
-		// }
 		);
 	},
 
 	logCommandEnd(ctx: CommandContext): void {
 		Log.info(`/${ctx.commandName} ended ${ctx.user.username}#${ctx.user.discriminator}`,
-			// {
-			// 	indexMeta: true,
-			// 	meta: {
-			// 		guildId: ctx.guildID,
-			// 		userTag: `${ctx.user.username}#${ctx.user.discriminator}`,
-			// 		userId: ctx.user.id,
-			// 		params: ctx.options,
-			// 	},
-			// }
 		);
 	},
 
@@ -172,15 +140,6 @@ export const LogUtils = {
 				},
 			});
 			Log.error(message,
-			// 	{
-			// 	indexMeta: true,
-			// 	meta: {
-			// 		name: error?.name,
-			// 		message: error?.message,
-			// 		stack: error?.stack,
-			// 		guildId: guildId,
-			// 	},
-			// }
 			);
 		} catch (e) {
 			Log.error(message);
