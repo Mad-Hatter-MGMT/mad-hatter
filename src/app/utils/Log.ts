@@ -34,11 +34,21 @@ try {
 const Log = {
 
 	info(statement: string | any, options?: Omit<LokiOptions, 'level'>): void {
-		logger.info(statement, options);
-		Sentry.addBreadcrumb({
-			level: Sentry.Severity.Info,
-			message: statement,
-		});
+		if (process.env.NODE_ENV != 'production' || !logger.info) {
+			// eslint-disable-next-line no-console
+			console.log(statement);
+			logger.info(statement, options);
+			Sentry.addBreadcrumb({
+				level: Sentry.Severity.Info,
+				message: statement,
+			});
+		} else {
+			logger.info(statement, options);
+			Sentry.addBreadcrumb({
+				level: Sentry.Severity.Info,
+				message: statement,
+			});
+		}
 	},
 
 	warn(statement: string | any, options?: Omit<LokiOptions, 'level'>): void {
