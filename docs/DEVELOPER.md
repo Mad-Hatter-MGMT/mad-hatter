@@ -26,6 +26,8 @@ following products on your development machine:
 
 * [GNU Make](https://www.gnu.org/software/make/) is a tool used to streamline local application start-up.
 
+* [Grafana Loki](https://grafana.com/oss/loki/) is a log aggregation system designed to store and query logs from all your applications and infrastructure.
+
 ## Setup Discord developer application
 
 ### Create personal developer bot
@@ -63,7 +65,7 @@ Open Discord User Settings, navigate to Advanced, and enable Developer Mode:
 
 Create a `.env` file in the project root directory using `.env.template` as a template. -->
 
-## Setup grafana
+## Setup Grafana Loki
 
 Visit [Grafana.com](https://grafana.com/) :
 
