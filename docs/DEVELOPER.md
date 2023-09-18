@@ -131,8 +131,9 @@ Copy your MONGODB_PREFIX and MONGODB_CLUSTER in to your .env file from the conne
 | MONGODB_USERNAME | Omit if using Docker to build the application. |
 | MONGODB_PASS | Omit if using Docker to build the application. |
 | MONGODB_CLUSTER | Omit if using Docker to build the application. |
-| LOKI_USER_NAME | Put in your grafana `username` here. |
-| LOKI_PASSWORD | Put in your copied grafana `API key` here. |
+| LOKI_HOST | Put in your grafana loki endpoint `URL` here. |
+| LOKI_USER_NAME | Put in your grafana loki `User` here. |
+| LOKI_PASSWORD | Put in your copied grafana loki `API key` here. |
 
 Example `.env` file (example uses random fake keys):
 

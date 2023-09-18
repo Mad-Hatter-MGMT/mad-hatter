@@ -5,6 +5,7 @@
 1. Removed support for Lodgna.
 2. Installed and configured pino-loki.
 3. Modified yaml integration.
+4. Update grafana loki setup documentation.
 
 ## 1.5-PRE-RELEASE (2023-03-15)
 
