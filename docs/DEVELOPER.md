@@ -43,11 +43,13 @@ To retrieve the bot token, naviage to the "Bot" tab:
 ![](images/create_bot.png)
 
 ### Create invite link
+
 See [Bot invite links](https://discordjs.guide/preparations/adding-your-bot-to-servers.html#bot-invite-links) for a complete guide.
 
 An invite link must be generated that can be used by a server admin to invite the bot into their Discord server. Replace `<YOUR_CLIENT_ID_HERE>` in the following link with your client ID. This value can be found in the "OAuth2" tab under the section "Client Information". Send this link, with your client ID, to a developer on the Mad Hatter team to have the bot invited to the Bankless Bot Garage.
 
 Invite link:
+
 ```
 https://discord.com/api/oauth2/authorize?client_id=<YOUR_CLIENT_ID_HERE>&permissions=399163616342&scope=applications.commands%20bot
 ```
@@ -57,24 +59,30 @@ https://discord.com/api/oauth2/authorize?client_id=<YOUR_CLIENT_ID_HERE>&permiss
 Open Discord User Settings, navigate to Advanced, and enable Developer Mode:
 ![](images/discord_developer_mode.png)
 
-## Setup local environment file
+<!-- ## Setup local environment file
 
-Create a `.env` file in the project root directory using `.env.template` as a template.
+Create a `.env` file in the project root directory using `.env.template` as a template. -->
 
-### Setup grafana
-1. Visit [Grafana.com](https://grafana.com/) :
+## Setup grafana
 
-![](images/grafana-landing.png)
+Visit [Grafana.com](https://grafana.com/) :
+
+![Grafana landing page](images/grafana-landing.png)
 
 Sign in or create an account if you don't already have one. :
 
-![](images/grafana-create-acct.png)
+![Signin or create Grafana sccount page](images/grafana-create-acct.png)
 
-Click `API keys` to create a new API key or use one you already have.
-Copy your API key and your username into the .env file:
-![](images/grafana-create-api.png)
+On your account page scroll down till you find Loki, then click on the "Details" button.
+![Loki details selection](images/loki-details.png)
 
-### Setup MongoDB.
+On the Loki details page, copy the "URL" and assign it to your env variable of `LOKI_HOST`, also copy the user value and assign it to `LOKI_USERNAME` env variable.
+![Loki credentials](images/loki-credentials.png)
+
+Lastly click "API keys" menu on the sidebar, then create a new API key or use one you already have. Assign the API key an editor role. Copy your API key and assign it to `LOKI_PASSWORD` in the .env file:
+![Generate loki API Keys](images/grafana-create-api.png)
+
+### Setup MongoDB
 
 1. Visit MongoDB [website](https://account.mongodb.com/account/login) to create an account or login to your account:
 
@@ -91,7 +99,7 @@ NB: copy and save your username and password somewhere as this will be included 
 
 ![](images/setFinish.png)
 
-5. Add IP address: 
+5. Add IP address:
 
 ![](images/addIP.png)
 
@@ -111,7 +119,6 @@ Click on the connect button to get the connection link:
 Copy your MONGODB_PREFIX and MONGODB_CLUSTER in to your .env file from the connection link provided has as specified in the image below:
 ![](images/link-ex.png)
 
-
 | Variable | Description|
 | --- | --- |  
 | DISCORD_BOT_APPLICATION_ID | Copy value of `APPLICATION ID` from Discord Developer Portal under your applications "General Information" tab. |
@@ -122,13 +129,13 @@ Copy your MONGODB_PREFIX and MONGODB_CLUSTER in to your .env file from the conne
 | NOTION_TOKEN | Only required if building or testing Notion commands. Can be generated from Notion integrations page. An admin will need to the integration to the QA Notion. |
 | MONGODB_PREFIX | Omit if using Docker to build the application. |
 | MONGODB_USERNAME | Omit if using Docker to build the application. |
-| MONGODB_PASS | Omit if using Docker to build the application. | 
+| MONGODB_PASS | Omit if using Docker to build the application. |
 | MONGODB_CLUSTER | Omit if using Docker to build the application. |
-| LOKI_USER_NAME | Put in your grafana `username` here. | 
+| LOKI_USER_NAME | Put in your grafana `username` here. |
 | LOKI_PASSWORD | Put in your copied grafana `API key` here. |
 
-
 Example `.env` file (example uses random fake keys):
+
 ```
 NODE_ENVIRONMENT=development
 SENTRY_ENVIRONMENT
