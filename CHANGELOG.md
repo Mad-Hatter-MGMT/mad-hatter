@@ -1,11 +1,19 @@
 # Changelog
 
+## 1.6-RELEASE (2023-09-15)
+
+1. Removed support for Lodgna.
+2. Installed and configured pino-loki.
+3. Modified yaml integration.
+4. Update grafana loki setup documentation.
+
 ## 1.5-PRE-RELEASE (2023-03-15)
 
 1. Bump json5 from 2.2.0 to 2.2.3 per Dependabot alert
 2. Bump webpack from 5.64.1 to 5.76.0 per Dependabot alert
 3. Changed Node engine from 16.x to 18.x 
 4. Update doc:developer.md to include grafana and mongodb setup
+5. Update Docker to use Node v18
 
 ## 1.4.7-RELEASE (2022-12-30)
 

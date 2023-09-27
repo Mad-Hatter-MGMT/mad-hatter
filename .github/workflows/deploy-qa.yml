@@ -38,5 +38,7 @@ jobs:
           HD_MONGODB_PASS: ${{secrets.QA_MONGODB_PASS}}
           HD_MONGODB_CLUSTER: ${{secrets.QA_MONGODB_CLUSTER}}
           HD_NOTION_TOKEN: ${{secrets.QA_NOTION_TOKEN}}
-          HD_LOGDNA_TOKEN: ${{secrets.QA_LOGDNA_TOKEN}}
+          HD_LOKI_HOST: ${{secrets.QA_LOKI_HOST}}
+          HD_LOKI_USERNAME: ${{secrets.QA_LOKI_USERNAME}}
+          HD_LOKI_PASSWORD: ${{secrets.QA_LOKI_PASSWORD}}
           HD_SENTRY_IO_DSN: ${{secrets.QA_SENTRY_IO_DSN}}

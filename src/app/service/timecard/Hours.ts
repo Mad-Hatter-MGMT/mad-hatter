@@ -28,12 +28,14 @@ export default async (guildMember: GuildMember): Promise<any> => {
 	const listOfTimeCards = await sendMultipleMessages(guildMember, completedTimeCards);
 	
 	
-	Log.info('Hours Requestsed', {
-		indexMeta: true,
-		meta: {
-			HoursReturned: 'completedTimeCards',
-		},
-	});
+	Log.info('Hours Requestsed',
+	// {
+	// 	indexMeta: true,
+	// 	meta: {
+	// 		HoursReturned: 'completedTimeCards',
+	// 	},
+	// }
+	);
 	return listOfTimeCards;
 };
 const sendMultipleMessages = async (guildMember: GuildMember, dbRecords: Cursor): Promise<any> => {

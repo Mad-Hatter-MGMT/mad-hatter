@@ -45,15 +45,17 @@ export default async (guildMember: GuildMember, date: number, description: strin
 		throw new ValidationError('Event is not active.');
 	}
 	
-	Log.info('timecard ended', {
-		indexMeta: true,
-		meta: {
-			discordId: activeTimecard.discordServerId,
-			duration: duration,
-			isActive: false,
-			description: description,
-		},
-	});
+	Log.info('timecard ended',
+	// {
+	// 	indexMeta: true,
+	// 	meta: {
+	// 		discordId: activeTimecard.discordServerId,
+	// 		duration: duration,
+	// 		isActive: false,
+	// 		description: description,
+	// 	},
+	// }
+	);
 	
 	await guildMember.send(`Timecard finished at ${dayjs(date).format()}`);
 	return updateTimecardResult;
