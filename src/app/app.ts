@@ -46,14 +46,14 @@ client.login(process.env.DISCORD_BOT_TOKEN).catch(Log.error);
 function initializeClient(): Client {
 	const clientOptions: ClientOptions = {
 		intents: [
-			GatewayIntentBits.Guilds,
-			GatewayIntentBits.GuildBans,
-			GatewayIntentBits.GuildMembers,
-			GatewayIntentBits.GuildEmojisAndStickers,
-			GatewayIntentBits.GuildVoiceStates,
-			GatewayIntentBits.GuildPresences,
-			GatewayIntentBits.GuildMessages,
 			GatewayIntentBits.DirectMessages,
+			GatewayIntentBits.Guilds,
+			GatewayIntentBits.GuildEmojisAndStickers,
+			GatewayIntentBits.GuildMembers,
+			GatewayIntentBits.GuildMessages,
+			GatewayIntentBits.GuildModeration,
+			GatewayIntentBits.GuildPresences,
+			GatewayIntentBits.GuildVoiceStates,
 		],
 		partials: [Partials.Message, Partials.Channel, Partials.User],
 	};
