@@ -1,11 +1,11 @@
 import { Db } from 'mongodb';
-import constants from '../constants/constants';
+import constants from '../../service/constants/constants';
 import ServiceUtils from '../../utils/ServiceUtils';
 import { GuildMember } from 'discord.js';
 import Log, { LogUtils } from '../../utils/Log';
 import MongoDbUtils from '../../utils/MongoDbUtils';
 
-export const expiresInHours = Number(process.env.DAO_GUEST_PASS_EXPIRATION_DAYS) * 24;
+const expiresInHours = Number(process.env.DAO_GUEST_PASS_EXPIRATION_DAYS) * 24;
 
 export default async (guestUser: GuildMember): Promise<any> => {
 	if (guestUser.user.bot) {
@@ -24,7 +24,7 @@ export default async (guestUser: GuildMember): Promise<any> => {
 	}).catch(e => LogUtils.logError('failed to send message to new guest', e));
 };
 
-export const addGuestUserToDb = async (guestUser: GuildMember): Promise<any> => {
+const addGuestUserToDb = async (guestUser: GuildMember): Promise<any> => {
 
 	// DB Connected
 	const db: Db = await MongoDbUtils.connect(constants.DB_NAME_DEGEN);
@@ -57,7 +57,7 @@ export const addGuestRoleToUser = async (guestUser: GuildMember): Promise<void> 
 	Log.info(`user ${guestUser.user.tag} given ${guestRole.name} role`);
 };
 
-export const notifyUserOfGuestExpiration = (guestUser: GuildMember): void =>{
+const notifyUserOfGuestExpiration = (guestUser: GuildMember): void =>{
 	// Send out notification on timer
 	setTimeout(async () => {
 		await guestUser.send({ content: `Hey <@${guestUser.id}>, your guest pass is set to expire in 1 day. Let us know if you have any questions!` });
@@ -69,7 +69,7 @@ export const notifyUserOfGuestExpiration = (guestUser: GuildMember): void =>{
 
 };
 
-export const removeGuestRoleOnExpiration = (guestUser: GuildMember): void => {
+const removeGuestRoleOnExpiration = (guestUser: GuildMember): void => {
 	// Handle removal of guest pass
 	setTimeout(async () => {
 		const timeoutDB: Db = await MongoDbUtils.connect(constants.DB_NAME_DEGEN);

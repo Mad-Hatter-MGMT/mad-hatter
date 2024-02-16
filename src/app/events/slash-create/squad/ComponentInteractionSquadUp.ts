@@ -1,5 +1,5 @@
 import { ComponentContext } from 'slash-create';
-import { handleInteractionConfirm, handleInteractionClaim } from '../../../service/squad/LaunchSquad';
+import { handleInteractionConfirm, handleInteractionClaim } from '../../../libraries/SquadUp';
 import { ComponentMeta } from '../ComponentInteraction';
 
 

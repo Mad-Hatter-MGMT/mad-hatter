@@ -1,6 +1,6 @@
 import assert from 'assert';
-import RetrieveFAQs from '../../../app/service/notion/RetrieveFAQs';
-import { notionQueue } from '../../../app/service/notion/NotionQueue';
+import RetrieveFAQs from '../../../app/libraries/Notion/RetrieveFAQs';
+import { notionQueue } from '../../../app/libraries/Notion/NotionQueue';
 import * as mockFaqs from './retrieve_faqs_mock.json';
 
 jest.mock('../../../app/service/notion/NotionQueue');

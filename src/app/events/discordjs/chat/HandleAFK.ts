@@ -1,7 +1,10 @@
 import { GuildMember, Message } from 'discord.js';
 import ServiceUtils from '../../../utils/ServiceUtils';
-import { PublishAFKMessage } from '../../../service/AFK/PublishAFKMessage';
-import { AFKMentionResponse } from '../../../service/AFK/AFKMentionResponse';
+import {
+	PublishAFKMessage,
+	AFKMentionResponse
+} from '../../../libraries/AFK';
+// import { AFKMentionResponse } from '../../../libraries/AFK/AFKMentionResponse';
 import Log from '../../../utils/Log';
 
 const HandleAFK = async (message: Message): Promise<any> => {

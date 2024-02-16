@@ -1,7 +1,16 @@
-import { Collection, GuildMember, PartialGuildMember, Role, Snowflake } from 'discord.js';
+import {
+	Collection,
+	GuildMember,
+	PartialGuildMember,
+	Role,
+	Snowflake
+} from 'discord.js';
 import roleIds from '../../service/constants/roleIds';
-import AddGuestPass from '../../service/guest-pass/AddGuestPass';
-import RemoveGuestPass from '../../service/guest-pass/RemoveGuestPass';
+import {
+	AddGuestPass,
+	RemoveGuestPass
+} from '../../libraries/GuestPass';
+// import RemoveGuestPass from '../../libraries/GuestPass/RemoveGuestPass';
 import { DiscordEvent } from '../../types/discord/DiscordEvent';
 import ServiceUtils from '../../utils/ServiceUtils';
 import sendGuildWelcomeMessage from '../discordjs/welcomeMats/GuildMats';

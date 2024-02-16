@@ -18,7 +18,12 @@ import {
 	Attachment,
 } from 'discord.js';
 import { Db } from 'mongodb';
-import { ButtonStyle, CommandContext, ComponentActionRow, ComponentType } from 'slash-create';
+import {
+	ButtonStyle,
+	CommandContext,
+	ComponentActionRow,
+	ComponentType
+} from 'slash-create';
 import client from '../app';
 import ValidationError from '../errors/ValidationError';
 import constants from '../service/constants/constants';

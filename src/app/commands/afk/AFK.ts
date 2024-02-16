@@ -5,7 +5,7 @@ import {
 } from 'slash-create';
 import ValidationError from '../../errors/ValidationError';
 import ServiceUtils from '../../utils/ServiceUtils';
-import ToggleAFK from '../../service/AFK/ToggleAFK';
+import { ToggleAFK } from '../../libraries/AFK';
 import discordServerIds from '../../service/constants/discordServerIds';
 import Log, { LogUtils } from '../../utils/Log';
 

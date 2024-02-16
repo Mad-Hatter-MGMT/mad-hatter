@@ -1,4 +1,8 @@
-import { CommandContext, SlashCommand, SlashCreator } from 'slash-create';
+import {
+	CommandContext,
+	SlashCommand,
+	SlashCreator
+} from 'slash-create';
 import { LogUtils } from '../../utils/Log';
 
 export default class FeatureRequest extends SlashCommand {

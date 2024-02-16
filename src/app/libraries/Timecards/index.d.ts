@@ -1,4 +1,10 @@
-import { Collection, ObjectId } from 'mongodb';
+import {
+	Collection,
+	ObjectId
+} from 'mongodb';
+import Checkin from './Checkin';
+import Checkout from './Checkout';
+import Hours from './Hours';
 
 export interface Timecard extends Collection {
 	_id: ObjectId,
@@ -10,3 +16,9 @@ export interface Timecard extends Collection {
 	discordServerId: string,
 	isActive: boolean,
 }
+
+export {
+	Checkin,
+	Checkout,
+	Hours
+};

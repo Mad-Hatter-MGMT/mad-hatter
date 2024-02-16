@@ -1,11 +1,14 @@
-import GuestPassService from '../../service/guest-pass/GuestPassService';
-import { Client, Guild } from 'discord.js';
+import GuestPassService from '../../libraries/GuestPass/GuestPassService';
+import {
+	Client,
+	Guild
+} from 'discord.js';
 import constants from '../../service/constants/constants';
 import discordServerIds from '../../service/constants/discordServerIds';
 import { DiscordEvent } from '../../types/discord/DiscordEvent';
 import Log, { LogUtils } from '../../utils/Log';
 import MongoDbUtils from '../../utils/MongoDbUtils';
-import SquadCronJob from '../../service/squad/SquadCronJobs';
+import SquadCronJob from '../../libraries/SquadUp/SquadCronJobs';
 
 export default class implements DiscordEvent {
 	name = 'ready';

@@ -1,5 +1,5 @@
 import { User } from 'discord.js';
-import ValidationError from '../errors/ValidationError';
+import ValidationError from '../../errors/ValidationError';
 
 const SquadUtils = {
 

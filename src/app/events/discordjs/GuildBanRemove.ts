@@ -1,5 +1,9 @@
 import { GuildBan } from 'discord.js';
-import { Db, InsertOneWriteOpResult, MongoError } from 'mongodb';
+import {
+	Db,
+	InsertOneWriteOpResult,
+	MongoError
+} from 'mongodb';
 import constants from '../../service/constants/constants';
 import { Allowlist } from '../../types/discord/Allowlist';
 import { DiscordEvent } from '../../types/discord/DiscordEvent';

@@ -1,9 +1,13 @@
 import { GuildMember } from 'discord.js';
-import { Collection, Db, Cursor } from 'mongodb';
-import constants from '../constants/constants';
-import { Timecard } from '../../types/timecard.ts/Timecard';
+import {
+	Collection,
+	Db,
+	Cursor
+} from 'mongodb';
+import constants from '../../service/constants/constants';
+import { Timecard } from '.';
 import Log from '../../utils/Log';
-import { generateEmbedMessage } from './publishTimecards/publishTimecards';
+import { generateEmbedMessage } from './publishTimecards';
 import MongoDbUtils from '../../utils/MongoDbUtils';
 import { MessageEmbedOptions } from 'slash-create';
 

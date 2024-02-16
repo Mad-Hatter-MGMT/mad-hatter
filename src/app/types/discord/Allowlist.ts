@@ -1,4 +1,7 @@
-import { Collection, ObjectId } from 'mongodb';
+import {
+	Collection,
+	ObjectId
+} from 'mongodb';
 
 export interface Allowlist extends Collection {
 	_id: ObjectId,

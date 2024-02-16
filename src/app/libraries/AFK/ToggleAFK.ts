@@ -2,7 +2,7 @@ import { GuildMember } from 'discord.js';
 import ValidationError from '../../errors/ValidationError';
 import ServiceUtils from '../../utils/ServiceUtils';
 import Log from '../../utils/Log';
-import roleIds from '../constants/roleIds';
+import roleIds from '../../service/constants/roleIds';
 
 export default async (guildMember: GuildMember): Promise<boolean> => {
 	if (guildMember.user.id === null) {

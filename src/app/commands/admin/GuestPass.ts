@@ -7,7 +7,7 @@ import {
 } from 'slash-create';
 import client from '../../app';
 import roleIds from '../../service/constants/roleIds';
-import { addGuestRoleToUser } from '../../service/guest-pass/AddGuestPass';
+import { addGuestRoleToUser } from '../../libraries/GuestPass';
 import discordServerIds from '../../service/constants/discordServerIds';
 import Log, { LogUtils } from '../../utils/Log';
 

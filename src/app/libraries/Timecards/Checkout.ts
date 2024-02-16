@@ -1,7 +1,11 @@
 import { GuildMember } from 'discord.js';
-import { Collection, Db, UpdateWriteOpResult } from 'mongodb';
-import constants from '../constants/constants';
-import { Timecard } from '../../types/timecard.ts/Timecard';
+import {
+	Collection,
+	Db,
+	UpdateWriteOpResult
+} from 'mongodb';
+import constants from '../../service/constants/constants';
+import { Timecard } from '.';
 import ValidationError from '../../errors/ValidationError';
 import Log from '../../utils/Log';
 

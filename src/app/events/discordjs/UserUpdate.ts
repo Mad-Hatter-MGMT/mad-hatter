@@ -1,4 +1,7 @@
-import { PartialUser, User } from 'discord.js';
+import {
+	PartialUser,
+	User
+} from 'discord.js';
 import { DiscordEvent } from '../../types/discord/DiscordEvent';
 import ServiceUtils from '../../utils/ServiceUtils';
 import Log, { LogUtils } from '../../utils/Log';

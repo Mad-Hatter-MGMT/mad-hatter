@@ -1,4 +1,4 @@
-import { Timecard } from '../../../types/timecard.ts/Timecard';
+import { Timecard } from '.';
 import dayjs from 'dayjs';
 import { MessageEmbedOptions } from 'slash-create';
 

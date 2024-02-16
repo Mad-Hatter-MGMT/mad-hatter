@@ -54,6 +54,7 @@ function initializeClient(): Client {
 			GatewayIntentBits.GuildModeration,
 			GatewayIntentBits.GuildPresences,
 			GatewayIntentBits.GuildVoiceStates,
+			GatewayIntentBits.MessageContent,
 		],
 		partials: [Partials.Message, Partials.Channel, Partials.User],
 	};

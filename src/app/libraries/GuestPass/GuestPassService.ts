@@ -1,4 +1,4 @@
-import constants from '../constants/constants';
+import constants from '../../service/constants/constants';
 import { Client } from '@notionhq/client';
 import { Client as DiscordClient } from 'discord.js';
 import { Db } from 'mongodb';

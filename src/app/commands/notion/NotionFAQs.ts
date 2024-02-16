@@ -1,6 +1,6 @@
 import { SlashCommand, CommandOptionType, CommandContext, SlashCreator } from 'slash-create';
 import client from '../../app';
-import RetrieveFAQs from '../../service/notion/RetrieveFAQs';
+import { RetrieveFAQs } from '../../libraries/Notion';
 import discordServerIds from '../../service/constants/discordServerIds';
 import { LogUtils } from '../../utils/Log';
 import ServiceUtils from '../../utils/ServiceUtils';

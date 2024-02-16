@@ -10,7 +10,7 @@ import ServiceUtils from '../../utils/ServiceUtils';
 import ValidationError from '../../errors/ValidationError';
 import discordServerIds from '../../service/constants/discordServerIds';
 import { LogUtils } from '../../utils/Log';
-import LaunchSquad from '../../service/squad/LaunchSquad';
+import LaunchSquad from '../../libraries/SquadUp';
 import { GuildMember } from 'discord.js';
 
 export default class Squad extends SlashCommand {

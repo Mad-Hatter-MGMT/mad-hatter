@@ -9,15 +9,26 @@ import {
 	TextChannel,
 	User,
 } from 'discord.js';
-import { CommandContext, ComponentContext } from 'slash-create';
+import {
+	CommandContext,
+	ComponentContext
+} from 'slash-create';
 import Log, { LogUtils } from '../../utils/Log';
-import SquadUtils from '../../utils/SquadUtils';
+import SquadUtils from './SquadUtils';
+import {
+	SquadBase,
+	SquadClaim,
+	SquadStatus
+} from '.'
 import ValidationError from '../../errors/ValidationError';
 import client from '../../app';
-import channelIds from '../constants/channelIds';
-import { Db, Collection } from 'mongodb';
+import channelIds from '../../service/constants/channelIds';
+import {
+	Db,
+	// Collection
+} from 'mongodb';
 import dbInstance from '../../utils/MongoDbUtils';
-import constants from '../constants/constants';
+import constants from '../../service/constants/constants';
 import { randomUUID } from 'crypto';
 import { ComponentMeta } from '../../events/slash-create/ComponentInteraction';
 
@@ -302,10 +313,10 @@ const dbCreateSquad = async (squadId: string, squadEmbed: EmbedBuilder, userId: 
 		guildId: squadMsg.guild.id,
 		messageId: squadMsg.id,
 		authorId: userId,
-		title: squadEmbed.title,
-		description: squadEmbed.description,
+		title: squadEmbed.setTitle,
+		description: squadEmbed.setDescription,
 		claimedBy: {},
-		created: squadEmbed.timestamp,
+		created: squadEmbed.setTimestamp,
 		active: true,
 	};
 
@@ -315,24 +326,6 @@ const dbCreateSquad = async (squadId: string, squadEmbed: EmbedBuilder, userId: 
 
 	await dbSquad.insertOne(updateDoc);
 };
-
-interface SquadBase {
-	squadId: string,
-	squadEmbed: EmbedBuilder,
-	squadMessage: Message,
-	dbSquad: Collection<any>,
-}
-
-interface SquadClaim extends SquadBase{
-	userId: string,
-	claim: boolean,
-	record: any,
-}
-
-interface SquadStatus extends SquadBase{
-	buttonLabels: string[],
-	setActive: boolean,
-}
 
 export const handleInteractionClaim = async (componentContext: ComponentContext, meta: ComponentMeta): Promise<void> => {
 
@@ -344,7 +337,7 @@ export const handleInteractionClaim = async (componentContext: ComponentContext,
 
 	const db: Db = await dbInstance.connect(constants.DB_NAME_DEGEN);
 
-	const squadBase = {
+	const squadBase: SquadBase = {
 		squadId: meta.data,
 		squadMessage: squadMessage,
 		squadEmbed: squadMessage.embeds[0],
@@ -419,7 +412,7 @@ const interactionClaimSquad = async (squadClaim: SquadClaim): Promise<void> => {
 
 	switch(squadClaim.claim) {
 	case true:
-		if (squadClaim.squadEmbed.data.length <= 24) {
+		if (squadClaim.squadEmbed.length <= 24) {
 			Log.debug('squadUp interactionClaimSquad() updating embed');
 		
 			updateEmbed = squadClaim.squadEmbed.addFields('\u200b', `🙋 - <@${squadClaim.userId}>`, false);
@@ -480,7 +473,7 @@ const createEmbed = (user: User, title: string, description: string): EmbedBuild
 	Log.debug('squadUp createEmbed() invoked');
 
 	return new EmbedBuilder()
-		.setAuthor(user.username, user.avatarURL())
+		.setAuthor({ name: user.username, iconURL: user.avatarURL() })
 		.setTitle(title)
 		.setDescription(description)
 		.setTimestamp();

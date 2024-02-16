@@ -1,7 +1,10 @@
 import { GuildMember } from 'discord.js';
-import { Db, Collection } from 'mongodb';
-import constants from '../constants/constants';
-import { Timecard } from '../../types/timecard.ts/Timecard';
+import {
+	Db,
+	Collection
+} from 'mongodb';
+import constants from '../../service/constants/constants';
+import { Timecard } from '.';
 import dayjs from 'dayjs';
 import ValidationError from '../../errors/ValidationError';
 import MongoDbUtils from '../../utils/MongoDbUtils';

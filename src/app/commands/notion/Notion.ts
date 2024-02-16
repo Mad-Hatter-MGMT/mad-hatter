@@ -1,15 +1,30 @@
 import { Client as NotionClient } from '@notionhq/client';
 import dayjs from 'dayjs';
-import { BaseGuildVoiceChannel, ChannelType, EmbedField, EmbedBuilder } from 'discord.js';
+import {
+	BaseGuildVoiceChannel,
+	ChannelType,
+	EmbedField,
+	EmbedBuilder
+} from 'discord.js';
 import { Db } from 'mongodb';
-import { CommandContext, CommandOptionType, SlashCommand, SlashCreator } from 'slash-create';
+import {
+	CommandContext,
+	CommandOptionType,
+	SlashCommand,
+	SlashCreator
+} from 'slash-create';
 import constants from '../../service/constants/constants';
 import discordServerIds from '../../service/constants/discordServerIds';
-import notionPageRefs from '../../service/notion/NotionGuildPages';
-import { NotionMeetingNotes } from '../../types/notion/NotionMeetingNotes';
+import {
+	notionPageRefs,
+	NotionMeetingNotes
+} from '../../libraries/Notion';
+// import notionPageRefs from '../../libraries/Notion/NotionGuildPages';
+// import { NotionMeetingNotes } from '../../libraries/Notion/NotionMeetingNotes';
 import { LogUtils } from '../../utils/Log';
 import MongoDbUtils from '../../utils/MongoDbUtils';
 import ServiceUtils from '../../utils/ServiceUtils';
+
 const notion = new NotionClient({ auth: process.env.NOTION_TOKEN });
 
 // Subcommands

@@ -1,4 +1,8 @@
-import { Db, MongoClient, MongoClientOptions } from 'mongodb';
+import {
+	Db,
+	MongoClient,
+	MongoClientOptions
+} from 'mongodb';
 import constants from '../service/constants/constants';
 import Log from './Log';
 

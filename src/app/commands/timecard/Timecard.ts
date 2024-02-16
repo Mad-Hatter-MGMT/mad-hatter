@@ -6,9 +6,14 @@ import {
 } from 'slash-create';
 import ValidationError from '../../errors/ValidationError';
 import ServiceUtils from '../../utils/ServiceUtils';
-import Checkin from '../../service/timecard/Checkin';
-import Checkout from '../../service/timecard/Checkout';
-import Hours from '../../service/timecard/Hours';
+import {
+	Checkin,
+	Checkout,
+	Hours
+} from '../../libraries/Timecards';
+// import Checkin from '../../libraries/Timecards/Checkin';
+// import Checkout from '../../libraries/Timecards/Checkout';
+// import Hours from '../../libraries/Timecards/Hours';
 import discordServerIds from '../../service/constants/discordServerIds';
 import { LogUtils } from '../../utils/Log';
 

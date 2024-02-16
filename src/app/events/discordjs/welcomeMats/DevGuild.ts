@@ -1,7 +1,7 @@
 import { GuildMember, EmbedBuilder } from 'discord.js';
 import { Client } from '@notionhq/client';
-import notionPageRefs from '../../../service/notion/NotionGuildPages';
-import { notionQueue } from '../../../service/notion/NotionQueue';
+import notionPageRefs from '../../../libraries/Notion/NotionGuildPages';
+import { notionQueue } from '../../../libraries/Notion/NotionQueue';
 import { LogUtils } from '../../../utils/Log';
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
